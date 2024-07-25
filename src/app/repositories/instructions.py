@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from models.instruction import Instruction
+from src.app.models.instruction import Instruction
 
 DB_COLLECTION = "instructions"
 
@@ -10,10 +10,8 @@ class InstructionRepository:
 
     def insert(self, instruction: Instruction) -> Instruction:
         instruction_dict = instruction.dict(exclude={"id"})
-        instruction_dict["db_connection_id"] = str(
-            instruction.db_connection_id)
-        instruction.id = str(self.storage.insert_one(
-            DB_COLLECTION, instruction_dict))
+        instruction_dict["db_connection_id"] = str(instruction.db_connection_id)
+        instruction.id = str(self.storage.insert_one(DB_COLLECTION, instruction_dict))
 
         return instruction
 
@@ -27,8 +25,7 @@ class InstructionRepository:
 
     def update(self, instruction: Instruction) -> Instruction:
         instruction_dict = instruction.dict(exclude={"id"})
-        instruction_dict["db_connection_id"] = str(
-            instruction.db_connection_id)
+        instruction_dict["db_connection_id"] = str(instruction.db_connection_id)
 
         self.storage.update_or_create(
             DB_COLLECTION,

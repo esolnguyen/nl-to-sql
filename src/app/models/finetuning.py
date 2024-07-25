@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from enum import Enum
-from constants.model_contexts import OPENAI_FINETUNING_MODELS_WINDOW_SIZES
+from src.app.constants.model_contexts import OPENAI_FINETUNING_MODELS_WINDOW_SIZES
 
 
 class BaseLLM(BaseModel):
@@ -28,7 +28,7 @@ class Finetuning(BaseModel):
     finetuning_job_id: str | None = None
     model_id: str | None = None
     created_at: datetime = Field(default_factory=datetime.now)
-    golden_sqls: list[str] | None = None
+    example_sqls: list[str] | None = None
     metadata: dict | None
 
 
@@ -46,7 +46,7 @@ class FineTuningRequest(BaseModel):
     schemas: list[str] | None
     alias: str | None = None
     base_llm: BaseLLM | None = None
-    golden_sqls: list[str] | None = None
+    example_sqls: list[str] | None = None
     metadata: dict | None
 
 

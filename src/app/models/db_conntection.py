@@ -5,7 +5,7 @@ import re
 from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, BaseSettings, Extra, Field, validator
-from utils.encrypt import FernetEncrypt
+from src.app.utils.encrypt import FernetEncrypt
 from typing import Any
 
 

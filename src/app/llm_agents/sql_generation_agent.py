@@ -1,10 +1,50 @@
+import datetime
+import logging
+import os
+from queue import Queue
+from threading import Thread
+from typing import Any, Dict, List
+from langchain.agents.agent import AgentExecutor
+from langchain.agents.mrkl.base import ZeroShotAgent
+from langchain.callbacks.base import BaseCallbackManager
+from langchain.chains.llm import LLMChain
+from langchain_community.callbacks import get_openai_callback
+from langchain_openai import AzureOpenAIEmbeddings, OpenAIEmbeddings
+from overrides import override
+from src.app.constants.model_contexts import EMBEDDING_MODEL
+from src.app.constants.sql_generation_prompts import (
+    AGENT_PREFIX,
+    ERROR_PARSING_MESSAGE,
+    FORMAT_INSTRUCTIONS,
+    PLAN_BASE,
+    PLAN_WITH_FEWSHOT_EXAMPLES,
+    PLAN_WITH_FEWSHOT_EXAMPLES_AND_INSTRUCTIONS,
+    PLAN_WITH_INSTRUCTIONS,
+    SUFFIX_WITH_FEW_SHOT_SAMPLES,
+    SUFFIX_WITHOUT_FEW_SHOT_SAMPLES,
+)
+from databases.mongodb import NlToSQLDatabase
+from databases.sql_database import SQLDatabase, SQLInjectionError
+from src.app.llm_agents import (
+    EngineTimeOutORItemLimitError,
+    SQLGenerator,
+    replace_unprocessable_characters,
+)
+from src.app.llm_agents.toolkit.sql_generation_agent_toolkit import (
+    SQLGenerationAgentToolkit,
+)
+from models.db_conntection import DatabaseConnection
+from models.db_description import TableDescriptionStatus
+from models.prompt import Prompt
+from models.sql_generation import SQLGeneration
+from repositories.sql_generations import SQLGenerationRepository
+from repositories.table_descriptions import TableDescriptionRepository
+from services.context_store import ContextStore
 
-from typing import Any, List
-
-from llm_agents import SQLGenerator
+logger = logging.getLogger(__name__)
 
 
-class SQLGeneratorAgent(SQLGenerator):
+class SQLGenerationAgent(SQLGenerator):
     max_number_of_examples: int = 5
     llm: Any = None
 
@@ -19,7 +59,7 @@ class SQLGeneratorAgent(SQLGenerator):
 
     def create_sql_agent(
         self,
-        toolkit: SQLDatabaseToolkit,
+        toolkit: SQLGenerationAgentToolkit,
         callback_manager: BaseCallbackManager | None = None,
         prefix: str = AGENT_PREFIX,
         suffix: str | None = None,
@@ -27,15 +67,13 @@ class SQLGeneratorAgent(SQLGenerator):
         input_variables: List[str] | None = None,
         max_examples: int = 20,
         number_of_instructions: int = 1,
-        max_iterations: int
-        | None = int(os.getenv("AGENT_MAX_ITERATIONS", "15")),  # noqa: B008
+        max_iterations: int | None = int(os.getenv("AGENT_MAX_ITERATIONS", "15")),
         max_execution_time: float | None = None,
         early_stopping_method: str = "generate",
         verbose: bool = False,
         agent_executor_kwargs: Dict[str, Any] | None = None,
         **kwargs: Dict[str, Any],
     ) -> AgentExecutor:
-        """Construct an SQL agent from an LLM and tools."""
         tools = toolkit.get_tools()
         if max_examples > 0 and number_of_instructions > 0:
             plan = PLAN_WITH_FEWSHOT_EXAMPLES_AND_INSTRUCTIONS
@@ -69,8 +107,7 @@ class SQLGeneratorAgent(SQLGenerator):
             callback_manager=callback_manager,
         )
         tool_names = [tool.name for tool in tools]
-        agent = ZeroShotAgent(llm_chain=llm_chain,
-                              allowed_tools=tool_names, **kwargs)
+        agent = ZeroShotAgent(llm_chain=llm_chain, allowed_tools=tool_names, **kwargs)
         return AgentExecutor.from_agent_and_tools(
             agent=agent,
             tools=tools,
@@ -83,15 +120,15 @@ class SQLGeneratorAgent(SQLGenerator):
         )
 
     @override
-    def generate_response(  # noqa: PLR0912
+    def generate_response(
         self,
         user_prompt: Prompt,
         database_connection: DatabaseConnection,
         context: List[dict] = None,
         metadata: dict = None,
-    ) -> SQLGeneration:  # noqa: PLR0912
+    ) -> SQLGeneration:
         context_store = self.system.instance(ContextStore)
-        storage = self.system.instance(DB)
+        storage = self.system.instance(NlToSQLDatabase)
         response = SQLGeneration(
             prompt_id=user_prompt.id,
             llm_config=self.llm_config,
@@ -119,18 +156,15 @@ class SQLGeneratorAgent(SQLGenerator):
             user_prompt, number_of_samples=self.max_number_of_examples
         )
         if few_shot_examples is not None:
-            new_fewshot_examples = self.remove_duplicate_examples(
-                few_shot_examples)
+            new_fewshot_examples = self.remove_duplicate_examples(few_shot_examples)
             number_of_samples = len(new_fewshot_examples)
         else:
             new_fewshot_examples = None
             number_of_samples = 0
-        logger.info(
-            f"Generating SQL response to question: {str(user_prompt.dict())}")
+        logger.info(f"Generating SQL response to question: {str(user_prompt.dict())}")
         self.database = SQLDatabase.get_sql_engine(database_connection)
-        # Set Embeddings class depending on azure / not azure
         if self.system.settings["azure_api_key"] is not None:
-            toolkit = SQLDatabaseToolkit(
+            toolkit = SQLGenerationAgentToolkit(
                 db=self.database,
                 context=context,
                 few_shot_examples=new_fewshot_examples,
@@ -143,7 +177,7 @@ class SQLGeneratorAgent(SQLGenerator):
                 ),
             )
         else:
-            toolkit = SQLDatabaseToolkit(
+            toolkit = SQLGenerationAgentToolkit(
                 db=self.database,
                 context=context,
                 few_shot_examples=new_fewshot_examples,
@@ -159,8 +193,7 @@ class SQLGeneratorAgent(SQLGenerator):
             toolkit=toolkit,
             verbose=True,
             max_examples=number_of_samples,
-            number_of_instructions=len(
-                instructions) if instructions is not None else 0,
+            number_of_instructions=len(instructions) if instructions is not None else 0,
             max_execution_time=int(os.environ.get("DH_ENGINE_TIMEOUT", 150)),
         )
         agent_executor.return_intermediate_steps = True
@@ -191,8 +224,7 @@ class SQLGeneratorAgent(SQLGenerator):
             sql_query = self.extract_query_from_intermediate_steps(
                 result["intermediate_steps"]
             )
-        logger.info(
-            f"cost: {str(cb.total_cost)} tokens: {str(cb.total_tokens)}")
+        logger.info(f"cost: {str(cb.total_cost)} tokens: {str(cb.total_tokens)}")
         response.sql = replace_unprocessable_characters(sql_query)
         response.tokens_used = cb.total_tokens
         response.completed_at = datetime.datetime.now()
@@ -219,7 +251,7 @@ class SQLGeneratorAgent(SQLGenerator):
         metadata: dict = None,
     ):
         context_store = self.system.instance(ContextStore)
-        storage = self.system.instance(DB)
+        storage = self.system.instance(NlToSQLDatabase)
         sql_generation_repository = SQLGenerationRepository(storage)
         self.llm = self.model.get_model(
             database_connection=database_connection,
@@ -244,14 +276,12 @@ class SQLGeneratorAgent(SQLGenerator):
             user_prompt, number_of_samples=self.max_number_of_examples
         )
         if few_shot_examples is not None:
-            new_fewshot_examples = self.remove_duplicate_examples(
-                few_shot_examples)
+            new_fewshot_examples = self.remove_duplicate_examples(few_shot_examples)
             number_of_samples = len(new_fewshot_examples)
         else:
             new_fewshot_examples = None
             number_of_samples = 0
         self.database = SQLDatabase.get_sql_engine(database_connection)
-        # Set Embeddings class depending on azure / not azure
         if self.system.settings["azure_api_key"] is not None:
             embedding = AzureOpenAIEmbeddings(
                 openai_api_key=database_connection.decrypt_api_key(),
@@ -262,7 +292,7 @@ class SQLGeneratorAgent(SQLGenerator):
                 openai_api_key=database_connection.decrypt_api_key(),
                 model=EMBEDDING_MODEL,
             )
-            toolkit = SQLDatabaseToolkit(
+            toolkit = SQLGenerationAgentToolkit(
                 queuer=queue,
                 db=self.database,
                 context=[{}],
@@ -276,8 +306,7 @@ class SQLGeneratorAgent(SQLGenerator):
             toolkit=toolkit,
             verbose=True,
             max_examples=number_of_samples,
-            number_of_instructions=len(
-                instructions) if instructions is not None else 0,
+            number_of_instructions=len(instructions) if instructions is not None else 0,
             max_execution_time=int(os.environ.get("DH_ENGINE_TIMEOUT", 150)),
         )
         agent_executor.return_intermediate_steps = True

@@ -2,7 +2,7 @@ from functools import wraps
 import logging
 from typing import Any, Callable
 from fastapi.responses import JSONResponse
-from constants.error_mapping import ERROR_MAPPING
+from src.app.constants.error_mapping import ERROR_MAPPING
 import openai
 from google.api_core.exceptions import GoogleAPIError
 from sqlalchemy.exc import SQLAlchemyError
@@ -36,9 +36,12 @@ class EmptySQLGenerationError(CustomError):
     pass
 
 
+class FinetuningNotAvailableError(CustomError):
+    pass
+
+
 def error_response(error, detail: dict, default_error_code=""):
-    error_code = ERROR_MAPPING.get(
-        error.__class__.__name__, default_error_code)
+    error_code = ERROR_MAPPING.get(error.__class__.__name__, default_error_code)
     description = getattr(error, "description", None)
     logger.error(
         f"Error code: {error_code}, message: {error}, description: {description}, detail: {detail}"
@@ -58,8 +61,7 @@ def error_response(error, detail: dict, default_error_code=""):
 
 
 def stream_error_response(error, detail: dict, default_error_code=""):
-    error_code = ERROR_MAPPING.get(
-        error.__class__.__name__, default_error_code)
+    error_code = ERROR_MAPPING.get(error.__class__.__name__, default_error_code)
     description = getattr(error, "description", None)
     logger.error(
         f"Error code: {error_code}, message: {error}, description: {description}, detail: {detail}"

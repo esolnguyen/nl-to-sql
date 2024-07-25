@@ -1,8 +1,10 @@
-
-
-from models.prompt import Prompt, PromptRequest
+from src.app.models.prompt import Prompt, PromptRequest
 from repositories.prompts import PromptRepository
-from utils.custom_error import DatabaseConnectionNotFoundError, PromptNotFoundError, SchemaNotSupportedError
+from src.app.utils.custom_error import (
+    DatabaseConnectionNotFoundError,
+    PromptNotFoundError,
+    SchemaNotSupportedError,
+)
 from repositories.db_connections import DatabaseConnectionRepository
 
 

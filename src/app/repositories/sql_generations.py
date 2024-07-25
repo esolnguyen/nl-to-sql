@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from models.sql_generation import SQLGeneration
+from src.app.models.sql_generation import SQLGeneration
 
 DB_COLLECTION = "sql_generations"
 
@@ -48,8 +48,7 @@ class SQLGenerationRepository:
         self, query: dict, page: int = 0, limit: int = 0
     ) -> list[SQLGeneration]:
         if page > 0 and limit > 0:
-            rows = self.storage.find(
-                DB_COLLECTION, query, page=page, limit=limit)
+            rows = self.storage.find(DB_COLLECTION, query, page=page, limit=limit)
         else:
             rows = self.storage.find(DB_COLLECTION, query)
         result = []

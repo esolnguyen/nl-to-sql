@@ -2,8 +2,8 @@ from typing import Any
 from langchain_community.chat_models import ChatAnthropic, ChatCohere, ChatGooglePalm
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from overrides import override
-from llm_agents.large_language_model import LargeLanguageModel
-from models.db_conntection import DatabaseConnection
+from src.app.llm_agents.large_language_model import LargeLanguageModel
+from src.app.models.db_conntection import DatabaseConnection
 
 
 class ChatModel(LargeLanguageModel):

@@ -1,9 +1,8 @@
 from bson.objectid import ObjectId
 
-from models.prompt import Prompt
+from src.app.models.prompt import Prompt
 
 DB_COLLECTION = "prompts"
-
 
 
 class PromptRepository:
@@ -31,8 +30,7 @@ class PromptRepository:
 
     def find_by(self, query: dict, page: int = 0, limit: int = 0) -> list[Prompt]:
         if page > 0 and limit > 0:
-            rows = self.storage.find(
-                DB_COLLECTION, query, page=page, limit=limit)
+            rows = self.storage.find(DB_COLLECTION, query, page=page, limit=limit)
         else:
             rows = self.storage.find(DB_COLLECTION, query)
         result = []

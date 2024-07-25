@@ -22,3 +22,4 @@ OPENAI_FINETUNING_MODELS_WINDOW_SIZES = {
     "gpt-4": 8000,
     "gpt-4-0613": 8000,
 }
+EMBEDDING_MODEL = "text-embedding-3-large"

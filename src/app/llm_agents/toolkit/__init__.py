@@ -4,8 +4,8 @@ from langchain.agents.agent_toolkits.base import BaseToolkit
 from langchain.tools.base import BaseTool
 from langchain_openai import OpenAIEmbeddings
 from pydantic import Field
-from models.db_description import TableDescription
-from utils.sql_database import SQLDatabase
+from src.app.models.db_description import TableDescription
+from databases.sql_database import SQLDatabase
 
 
 class AgentToolkit(ABC, BaseToolkit):

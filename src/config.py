@@ -9,34 +9,34 @@ from overrides import EnforceOverrides
 from pydantic import BaseSettings
 
 _abstract_type_keys: Dict[str, str] = {
-    "dataherald.api.API": "api_impl",
-    "dataherald.db_scanner.Scanner": "db_scanner_impl",
-    "dataherald.eval.Evaluator": "eval_impl",
-    "dataherald.db.DB": "db_impl",
-    "dataherald.context_store.ContextStore": "context_store_impl",
-    "dataherald.vector_store.VectorStore": "vector_store_impl",
+    "nl_to_sql.api.API": "api_impl",
+    "nl_to_sql.db_scanner.Scanner": "db_scanner_impl",
+    "nl_to_sql.eval.Evaluator": "eval_impl",
+    "nl_to_sql.db.DB": "db_impl",
+    "nl_to_sql.context_store.ContextStore": "context_store_impl",
+    "nl_to_sql.vector_store.VectorStore": "vector_store_impl",
 }
 
 
 class Settings(BaseSettings):
     load_dotenv()
 
-    api_impl: str = os.environ.get("API_SERVER", "dataherald.api.fastapi.FastAPI")
+    api_impl: str = os.environ.get("API_SERVER", "nl_to_sql.api.fastapi.FastAPI")
 
     db_scanner_impl: str = os.environ.get(
-        "DB_SCANNER", "dataherald.db_scanner.sqlalchemy.SqlAlchemyScanner"
+        "DB_SCANNER", "nl_to_sql.db_scanner.sqlalchemy.SqlAlchemyScanner"
     )
 
     eval_impl: str = os.environ.get(
-        "EVALUATOR", "dataherald.eval.simple_evaluator.SimpleEvaluator"
+        "EVALUATOR", "nl_to_sql.eval.simple_evaluator.SimpleEvaluator"
     )
-    db_impl: str = os.environ.get("DB", "dataherald.db.mongo.MongoDB")
+    db_impl: str = os.environ.get("DB", "nl_to_sql.db.mongo.MongoDB")
 
     context_store_impl: str = os.environ.get(
-        "CONTEXT_STORE", "dataherald.context_store.default.DefaultContextStore"
+        "CONTEXT_STORE", "nl_to_sql.context_store.default.DefaultContextStore"
     )
     vector_store_impl: str = os.environ.get(
-        "VECTOR_STORE", "dataherald.vector_store.chroma.Chroma"
+        "VECTOR_STORE", "nl_to_sql.vector_store.chroma.Chroma"
     )
 
     db_name: str | None = os.environ.get("MONGODB_DB_NAME")

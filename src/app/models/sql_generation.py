@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, validator
-from models.llm import LLMConfig
+from src.app.models.llm import LLMConfig
 from datetime import datetime
 from enum import Enum
 from sql_metadata import Parser
@@ -49,6 +49,5 @@ class SQLGenerationRequest(BaseModel):
         try:
             Parser(v).tables
         except Exception as e:
-            raise ValueError(
-                f"SQL {v} is malformed. Please check the syntax.") from e
+            raise ValueError(f"SQL {v} is malformed. Please check the syntax.") from e
         return v

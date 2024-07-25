@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from models.example_sql import ExampleSQL
+from src.app.models.example_sql import ExampleSQL
 
 DB_COLLECTION = "example_sqls"
 
@@ -14,10 +14,8 @@ class ExampleSQLRepository:
 
     def insert(self, example_sql: ExampleSQL) -> ExampleSQL:
         example_sql_dict = example_sql.dict(exclude={"id"})
-        example_sql_dict["db_connection_id"] = str(
-            example_sql.db_connection_id)
-        example_sql.id = str(self.storage.insert_one(
-            DB_COLLECTION, example_sql_dict))
+        example_sql_dict["db_connection_id"] = str(example_sql.db_connection_id)
+        example_sql.id = str(self.storage.insert_one(DB_COLLECTION, example_sql_dict))
         return example_sql
 
     def find_one(self, query: dict) -> ExampleSQL | None:
@@ -30,8 +28,7 @@ class ExampleSQLRepository:
 
     def update(self, example_sql: ExampleSQL) -> ExampleSQL:
         example_sql_dict = example_sql.dict(exclude={"id"})
-        example_sql_dict["db_connection_id"] = str(
-            example_sql.db_connection_id)
+        example_sql_dict["db_connection_id"] = str(example_sql.db_connection_id)
 
         self.storage.update_or_create(
             DB_COLLECTION,

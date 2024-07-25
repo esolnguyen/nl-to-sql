@@ -16,8 +16,12 @@ from models.db_conntection import DatabaseConnection
 from models.prompt import Prompt
 from models.sql_generation import IntermediateStep, SQLGeneration
 from repositories.sql_generations import SQLGenerationRepository
-from utils.sql_database import SQLDatabase, SQLInjectionError, create_sql_query_status
-from utils.strings import contains_line_breaks
+from databases.sql_database import (
+    SQLDatabase,
+    SQLInjectionError,
+    create_sql_query_status,
+)
+from src.app.utils.strings import contains_line_breaks
 
 
 class EngineTimeOutORItemLimitError(Exception):
@@ -97,8 +101,7 @@ class SQLGenerator(Component, ABC):
         comments = [
             match.group() for match in re.finditer(r"--.*$", sql_query, re.MULTILINE)
         ]
-        sql_query_without_comments = re.sub(
-            r"--.*$", "", sql_query, flags=re.MULTILINE)
+        sql_query_without_comments = re.sub(r"--.*$", "", sql_query, flags=re.MULTILINE)
 
         if contains_line_breaks(sql_query_without_comments.strip()):
             return sql_query

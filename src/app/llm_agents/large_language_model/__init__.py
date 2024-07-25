@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 from config import Component, System
-from models.db_conntection import DatabaseConnection
+from src.app.models.db_conntection import DatabaseConnection
 
 
 class LargeLanguageModel(Component, ABC):

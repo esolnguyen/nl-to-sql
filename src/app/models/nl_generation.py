@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from models.llm import LLMConfig
+from src.app.models.llm import LLMConfig
 from datetime import datetime
 
 

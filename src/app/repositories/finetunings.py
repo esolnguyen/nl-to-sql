@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from models.finetuning import Finetuning
+from src.app.models.finetuning import Finetuning
 
 DB_COLLECTION = "finetunings"
 
@@ -40,8 +40,7 @@ class FinetuningsRepository:
 
     def find_by(self, query: dict, page: int = 0, limit: int = 0) -> list[Finetuning]:
         if page > 0 and limit > 0:
-            rows = self.storage.find(
-                DB_COLLECTION, query, page=page, limit=limit)
+            rows = self.storage.find(DB_COLLECTION, query, page=page, limit=limit)
         else:
             rows = self.storage.find(DB_COLLECTION, query)
         result = []
