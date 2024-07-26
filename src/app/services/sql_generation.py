@@ -5,8 +5,8 @@ from queue import Queue
 import pandas as pd
 from src.app.models.llm import LLMConfig
 from src.app.models.sql_generation import SQLGeneration, SQLGenerationRequest
-from repositories.prompts import PromptRepository
-from repositories.sql_generations import (
+from src.app.repositories.prompts import PromptRepository
+from src.app.repositories.sql_generations import (
     SQLGenerationNotFoundError,
     SQLGenerationRepository,
 )
@@ -18,9 +18,9 @@ from src.app.utils.custom_error import (
     PromptNotFoundError,
     SQLGenerationError,
 )
-from databases.sql_database import SQLDatabase, create_sql_query_status
-from config import System
-from repositories.db_connections import DatabaseConnectionRepository
+from src.app.databases.sql_database import SQLDatabase, create_sql_query_status
+from src.config import System
+from src.app.repositories.db_connections import DatabaseConnectionRepository
 
 
 class SQLGenerationService:

@@ -22,7 +22,7 @@ from src.app.llm_agents import replace_unprocessable_characters
 from src.app.models.db_description import TableDescription
 from src.app.constants.sql import TOP_K, TOP_TABLES
 from src.app.utils.custom_error import catch_exceptions
-from databases.sql_database import SQLDatabase
+from src.app.databases.sql_database import SQLDatabase
 from src.app.utils.timeout import run_with_timeout
 
 logger = logging.getLogger(__name__)

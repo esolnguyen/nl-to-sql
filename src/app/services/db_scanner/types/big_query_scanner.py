@@ -6,9 +6,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 from sqlalchemy.sql.schema import Column
 
-from databases.sql_database import SQLDatabase
+from src.app.databases.sql_database import SQLDatabase
 from src.app.models.query_history import QueryHistory
-from services.db_scanner import AbstractScanner
+from src.app.services.db_scanner import AbstractScanner
 
 
 MIN_CATEGORY_VALUE = 1

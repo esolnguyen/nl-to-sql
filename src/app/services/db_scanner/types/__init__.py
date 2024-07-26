@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy.sql.schema import Column
 
-from databases.sql_database import SQLDatabase
+from src.app.databases.sql_database import SQLDatabase
 from src.app.models.query_history import QueryHistory
 
 

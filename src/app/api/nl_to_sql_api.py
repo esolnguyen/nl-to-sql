@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-from dis import Instruction
 import io
 import json
 import logging
@@ -8,15 +7,14 @@ import os
 import time
 from queue import Queue
 from typing import List
-
 from bson.objectid import InvalidId, ObjectId
 from fastapi import BackgroundTasks, HTTPException
 from overrides import override
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List
 from fastapi import BackgroundTasks
-from api import API
-from api.types.requests import (
+from src.app.api import API
+from src.app.api.types.requests import (
     NLGenerationRequest,
     NLGenerationsSQLGenerationRequest,
     PromptSQLGenerationNLGenerationRequest,
@@ -24,7 +22,7 @@ from api.types.requests import (
     StreamPromptSQLGenerationRequest,
     UpdateMetadataRequest,
 )
-from api.types.responses import (
+from src.app.api.types.responses import (
     DatabaseConnectionResponse,
     ExampleSQLResponse,
     InstructionResponse,
@@ -33,8 +31,8 @@ from api.types.responses import (
     SQLGenerationResponse,
     TableDescriptionResponse,
 )
-from databases.mongodb import NlToSQLDatabase
-from databases.sql_database import SQLDatabase, SQLInjectionError
+from src.app.databases.mongodb import NlToSQLDatabase
+from src.app.databases.sql_database import SQLDatabase, SQLInjectionError
 from src.app.models.db_conntection import DatabaseConnection, DatabaseConnectionRequest
 from src.app.models.db_description import (
     RefreshTableDescriptionRequest,
@@ -49,31 +47,31 @@ from src.app.models.finetuning import (
     FineTuningStatus,
     Finetuning,
 )
-from src.app.models.instruction import InstructionRequest, UpdateInstruction
+from src.app.models.instruction import Instruction, InstructionRequest, UpdateInstruction
 from src.app.models.prompt import PromptRequest
 from src.app.models.query_history import QueryHistory
 from src.app.models.sql_generation import SQLGenerationRequest
-from repositories.db_connections import DatabaseConnectionRepository
-from repositories.example_sqls import (
+from src.app.repositories.db_connections import DatabaseConnectionRepository
+from src.app.repositories.example_sqls import (
     ExampleSQLNotFoundError,
     ExampleSQLRepository,
 )
-from repositories.finetunings import FinetuningsRepository
-from repositories.instructions import InstructionRepository
-from repositories.nl_generations import NLGenerationNotFoundError
-from repositories.query_histories import QueryHistoryRepository
-from repositories.sql_generations import SQLGenerationNotFoundError
-from repositories.table_descriptions import (
+from src.app.repositories.finetunings import FinetuningsRepository
+from src.app.repositories.instructions import InstructionRepository
+from src.app.repositories.nl_generations import NLGenerationNotFoundError
+from src.app.repositories.query_histories import QueryHistoryRepository
+from src.app.repositories.sql_generations import SQLGenerationNotFoundError
+from src.app.repositories.table_descriptions import (
     InvalidColumnNameError,
     TableDescriptionRepository,
 )
-from services.context_store import ContextStore
-from services.database_connection import DatabaseConnectionService
-from services.db_scanner import Scanner
-from services.finetuning.openai_finetuning import OpenAIFineTuning
-from services.nl_generation import NLGenerationService
-from services.prompt import PromptService
-from services.sql_generation import SQLGenerationService
+from src.app.services.context_store import ContextStore
+from src.app.services.database_connection import DatabaseConnectionService
+from src.app.services.db_scanner import Scanner
+from src.app.services.finetuning.openai_finetuning import OpenAIFineTuning
+from src.app.services.nl_generation import NLGenerationService
+from src.app.services.prompt import PromptService
+from src.app.services.sql_generation import SQLGenerationService
 from src.app.utils.custom_error import (
     DatabaseConnectionNotFoundError,
     EmptySQLGenerationError,
@@ -86,7 +84,7 @@ from src.app.utils.sql_utils import (
     filter_example_records_based_on_schema,
     validate_finetuning_schema,
 )
-from config import Component, System
+from src.config import System
 
 logger = logging.getLogger(__name__)
 

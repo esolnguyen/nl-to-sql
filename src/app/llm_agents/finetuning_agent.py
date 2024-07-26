@@ -22,8 +22,8 @@ from src.app.constants.sql_generation_prompts import (
     ERROR_PARSING_MESSAGE,
     FORMAT_INSTRUCTIONS,
 )
-from databases.mongodb import NlToSQLDatabase
-from databases.sql_database import SQLDatabase, SQLInjectionError
+from src.app.databases.mongodb import NlToSQLDatabase
+from src.app.databases.sql_database import SQLDatabase, SQLInjectionError
 from src.app.llm_agents import (
     EngineTimeOutORItemLimitError,
     SQLGenerator,
@@ -32,16 +32,16 @@ from src.app.llm_agents import (
 from src.app.llm_agents.toolkit.finetuning_agent_toolkit import (
     FineTuningAgentToolkit,
 )
-from models.db_conntection import DatabaseConnection
-from models.db_description import TableDescriptionStatus
-from models.finetuning import FineTuningStatus
-from models.prompt import Prompt
-from models.sql_generation import SQLGeneration
-from repositories.finetunings import FinetuningsRepository
-from repositories.sql_generations import SQLGenerationRepository
-from repositories.table_descriptions import TableDescriptionRepository
-from services.context_store import ContextStore
-from services.finetuning.openai_finetuning import OpenAIFineTuning
+from src.app.models.db_conntection import DatabaseConnection
+from src.app.models.db_description import TableDescriptionStatus
+from src.app.models.finetuning import FineTuningStatus
+from src.app.models.prompt import Prompt
+from src.app.models.sql_generation import SQLGeneration
+from src.app.repositories.finetunings import FinetuningsRepository
+from src.app.repositories.sql_generations import SQLGenerationRepository
+from src.app.repositories.table_descriptions import TableDescriptionRepository
+from src.app.services.context_store import ContextStore
+from src.app.services.finetuning.openai_finetuning import OpenAIFineTuning
 from src.app.utils.custom_error import FinetuningNotAvailableError
 
 logger = logging.getLogger(__name__)

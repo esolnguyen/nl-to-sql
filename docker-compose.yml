@@ -57,4 +57,5 @@ services:
 
 networks:
   nl_to_sql_network:
+    name: nl_to_sql_network
     external: true

@@ -28,17 +28,17 @@ from src.app.models.db_description import (
     ScannerRequest,
     TableDescriptionRequest,
 )
-from models.example_sql import ExampleSQL, ExampleSQLRequest
-from models.finetuning import (
+from src.app.models.example_sql import ExampleSQL, ExampleSQLRequest
+from src.app.models.finetuning import (
     CancelFineTuningRequest,
     FineTuningRequest,
     Finetuning,
 )
-from models.instruction import InstructionRequest, UpdateInstruction
-from models.prompt import PromptRequest
-from models.query_history import QueryHistory
-from models.sql_generation import SQLGenerationRequest
-from config import Component
+from src.app.models.instruction import InstructionRequest, UpdateInstruction
+from src.app.models.prompt import PromptRequest
+from src.app.models.query_history import QueryHistory
+from src.app.models.sql_generation import SQLGenerationRequest
+from src.config import Component
 
 
 class API(Component, ABC):

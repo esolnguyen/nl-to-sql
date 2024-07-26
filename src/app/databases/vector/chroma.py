@@ -2,9 +2,9 @@ from typing import Any, List
 import chromadb
 from overrides import override
 from sql_metadata import Parser
-from databases.vector import VectorDatabase
+from src.app.databases.vector import VectorDatabase
 from src.app.models.example_sql import ExampleSQL
-from config import System
+from src.config import System
 
 
 class Chroma(VectorDatabase):

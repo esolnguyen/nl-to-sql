@@ -1,17 +1,13 @@
 from datetime import datetime
 
-from nl_to_sql.api.types.requests import NLGenerationRequest
-from nl_to_sql.config import System
-from nl_to_sql.repositories.nl_generations import (
-    NLGenerationNotFoundError,
-    NLGenerationRepository,
-)
-from nl_to_sql.repositories.sql_generations import (
-    SQLGenerationNotFoundError,
-    SQLGenerationRepository,
-)
-from nl_to_sql.sql_generator.generates_nl_answer import GeneratesNlAnswer
-from nl_to_sql.types import LLMConfig, NLGeneration
+from app.api.types.requests import NLGenerationRequest
+from app.llm_agents.nl_answer_agent import GeneratesNlAnswer
+from app.models.llm import LLMConfig
+from app.models.nl_generation import NLGeneration
+from app.repositories.nl_generations import NLGenerationNotFoundError, NLGenerationRepository
+from app.repositories.sql_generations import SQLGenerationNotFoundError, SQLGenerationRepository
+from config import System
+
 
 
 class NLGenerationError(Exception):

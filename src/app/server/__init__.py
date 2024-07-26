@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from config import Settings
+from src.config import Settings
 
 
 class NlToSQLServer(ABC):

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, List
 from src.app.models.example_sql import ExampleSQL
-from config import Component, System
+from src.config import Component, System
 
 
 class VectorDatabase(Component, ABC):

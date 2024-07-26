@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from config import Component, System
+from src.config import Component, System
 
 
 class NlToSQLDatabase(Component, ABC):

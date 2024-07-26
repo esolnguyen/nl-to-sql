@@ -1,5 +1,5 @@
 from cryptography.fernet import Fernet
-from config import Settings
+from src.config import Settings
 
 
 class FernetEncrypt:

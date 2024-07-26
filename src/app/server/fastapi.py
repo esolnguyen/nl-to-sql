@@ -1,4 +1,3 @@
-import os
 from typing import List
 
 import fastapi
@@ -7,8 +6,8 @@ from fastapi import FastAPI as _FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.routing import APIRoute
 
-from api.nl_to_sql_api import NLToSQLAPI
-from api.types.requests import (
+from src.app.api.nl_to_sql_api import NLToSQLAPI
+from src.app.api.types.requests import (
     NLGenerationRequest,
     NLGenerationsSQLGenerationRequest,
     PromptSQLGenerationNLGenerationRequest,
@@ -16,7 +15,7 @@ from api.types.requests import (
     StreamPromptSQLGenerationRequest,
     UpdateMetadataRequest,
 )
-from api.types.responses import (
+from src.app.api.types.responses import (
     DatabaseConnectionResponse,
     ExampleSQLResponse,
     InstructionResponse,
@@ -41,8 +40,8 @@ from src.app.models.instruction import InstructionRequest, UpdateInstruction
 from src.app.models.prompt import PromptRequest
 from src.app.models.query_history import QueryHistory
 from src.app.models.sql_generation import SQLGenerationRequest
-from server import NlToSQLServer
-from config import Settings
+from src.app.server import NlToSQLServer
+from src.app import Settings
 from src import client
 
 

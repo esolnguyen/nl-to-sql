@@ -2,12 +2,12 @@ import re
 
 from sqlalchemy import inspect
 
-from databases.mongodb import NlToSQLDatabase
-from databases.sql_database import SQLDatabase
+from src.app.databases.mongodb import NlToSQLDatabase
+from src.app.databases.sql_database import SQLDatabase
 from src.app.models.db_conntection import DatabaseConnection, DatabaseConnectionRequest
-from repositories.db_connections import DatabaseConnectionRepository
-from repositories.table_descriptions import TableDescriptionRepository
-from services.db_scanner import Scanner
+from src.app.repositories.db_connections import DatabaseConnectionRepository
+from src.app.repositories.table_descriptions import TableDescriptionRepository
+from src.app.services.db_scanner import Scanner
 from src.app.utils.custom_error import SchemaNotSupportedError
 from src.app.utils.encrypt import FernetEncrypt
 

@@ -11,15 +11,15 @@ from sql_metadata import Parser
 from src.app.llm_agents.toolkit import AgentToolkit
 from overrides import override
 from langchain.tools.base import BaseTool
-from models.db_description import TableDescription
-from services.finetuning.openai_finetuning import OpenAIFineTuning
+from src.app.models.db_description import TableDescription
+from src.app.services.finetuning.openai_finetuning import OpenAIFineTuning
 from src.app.constants.finetuning_prompts import FINETUNING_SYSTEM_INFORMATION
 from src.app.constants.model_contexts import OPENAI_FINETUNING_MODELS_WINDOW_SIZES
 from src.app.constants.sql import TOP_K, TOP_TABLES
-from llm_agents import replace_unprocessable_characters
+from src.app.llm_agents import replace_unprocessable_characters
 from src.app.utils.timeout import run_with_timeout
 from src.app.utils.custom_error import catch_exceptions
-from databases.sql_database import SQLDatabase
+from src.app.databases.sql_database import SQLDatabase
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,

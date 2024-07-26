@@ -118,3 +118,11 @@ If there is a consistent parsing error, please return "I don't know" as your fin
 If you know the final answer and do not need to use any tools, directly return the final answer in this format:
 Final Answer: <your final answer>.
 """
+
+HUMAN_TEMPLATE = """Given a Question, a Sql query and the sql query result try to answer the question
+If the sql query result doesn't answer the question just say 'I don't know'
+Answer the question given the sql query and the sql query result.
+Question: {prompt}
+SQL query: {sql_query}
+SQL query result: {sql_query_result}
+"""

@@ -1,7 +1,7 @@
 import os
 import boto3
 from cryptography.fernet import InvalidToken
-from config import Settings
+from src.config import Settings
 from src.app.utils.encrypt import FernetEncrypt
 from src.app.models.db_conntection import FileStorage
 

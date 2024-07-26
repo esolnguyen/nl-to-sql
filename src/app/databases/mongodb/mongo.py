@@ -1,8 +1,8 @@
 from bson.objectid import ObjectId
 from overrides import override
 from pymongo import MongoClient
-from databases.mongodb import NlToSQLDatabase
-from config import System
+from src.app.databases.mongodb import NlToSQLDatabase
+from src.config import System
 
 
 class MongoDB(NlToSQLDatabase):

@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from databases.sql_database import SQLDatabase
+from src.app.databases.sql_database import SQLDatabase
 from src.app.models.db_description import ScannerRequest, TableDescription
-from repositories.query_histories import QueryHistoryRepository
-from repositories.table_descriptions import TableDescriptionRepository
-from config import Component
+from src.app.repositories.query_histories import QueryHistoryRepository
+from src.app.repositories.table_descriptions import TableDescriptionRepository
+from src.config import Component
 
 
 class Scanner(Component, ABC):

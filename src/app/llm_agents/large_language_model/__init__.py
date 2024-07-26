@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
-from config import Component, System
+from src.config import Component, System
 from src.app.models.db_conntection import DatabaseConnection
 
 

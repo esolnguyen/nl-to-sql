@@ -4,7 +4,6 @@ import os
 import time
 import uuid
 from typing import Any, List
-
 import numpy as np
 import tiktoken
 from langchain_openai import AzureOpenAIEmbeddings, OpenAIEmbeddings
@@ -12,7 +11,6 @@ from openai import OpenAI
 from overrides import override
 from sql_metadata import Parser
 from tiktoken import Encoding
-
 from src.app.constants.finetuning_prompts import FINETUNING_SYSTEM_INFORMATION
 from src.app.constants.model_contexts import (
     EMBEDDING_MODEL,
@@ -20,12 +18,12 @@ from src.app.constants.model_contexts import (
 )
 from src.app.models.db_description import TableDescription, TableDescriptionStatus
 from src.app.models.finetuning import FineTuningStatus, Finetuning
-from repositories.db_connections import DatabaseConnectionRepository
-from repositories.example_sqls import ExampleSQLRepository
-from repositories.finetunings import FinetuningsRepository
-from repositories.table_descriptions import TableDescriptionRepository
-from services.finetuning import FinetuningModel
-from config import System
+from src.app.repositories.db_connections import DatabaseConnectionRepository
+from src.app.repositories.example_sqls import ExampleSQLRepository
+from src.app.repositories.finetunings import FinetuningsRepository
+from src.app.repositories.table_descriptions import TableDescriptionRepository
+from src.app.services.finetuning import FinetuningModel
+from src.config import System
 
 FILE_PROCESSING_ATTEMPTS = 20
 CATEGORICAL_COLUMNS_THRESHOLD = 60

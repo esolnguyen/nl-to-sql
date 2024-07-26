@@ -6,13 +6,13 @@ from sql_metadata import Parser
 
 from src.app.models.example_sql import ExampleSQL, ExampleSQLRequest
 from src.app.models.prompt import Prompt
-from repositories.db_connections import DatabaseConnectionRepository
-from repositories.example_sqls import ExampleSQLRepository
-from repositories.instructions import InstructionRepository
-from services.context_store import ContextStore
+from src.app.repositories.db_connections import DatabaseConnectionRepository
+from src.app.repositories.example_sqls import ExampleSQLRepository
+from src.app.repositories.instructions import InstructionRepository
+from src.app.services.context_store import ContextStore
 from src.app.utils.custom_error import DatabaseConnectionNotFoundError
 from src.app.utils.sql_utils import extract_the_schemas_from_sql
-from config import System
+from src.config import System
 
 logger = logging.getLogger(__name__)
 

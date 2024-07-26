@@ -8,15 +8,15 @@ from typing import Any, List, Tuple
 from langchain.agents.agent import AgentExecutor
 from langchain.schema import AgentAction
 from langchain_community.callbacks import get_openai_callback
-from config import Component, System
+from src.config import Component, System
 from large_language_model.chat_model import ChatModel
-from models.llm import LLMConfig
-from models.db_description import TableDescription
-from models.db_conntection import DatabaseConnection
-from models.prompt import Prompt
-from models.sql_generation import IntermediateStep, SQLGeneration
-from repositories.sql_generations import SQLGenerationRepository
-from databases.sql_database import (
+from src.app.models.llm import LLMConfig
+from src.app.models.db_description import TableDescription
+from src.app.models.db_conntection import DatabaseConnection
+from src.app.models.prompt import Prompt
+from src.app.models.sql_generation import IntermediateStep, SQLGeneration
+from src.app.repositories.sql_generations import SQLGenerationRepository
+from src.app.databases.sql_database import (
     SQLDatabase,
     SQLInjectionError,
     create_sql_query_status,
