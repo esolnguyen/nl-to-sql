@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from src.app.models.nl_generation import NLGeneration
+from app.models.nl_generation import NLGeneration
 from pydantic import BaseModel
 
 DB_COLLECTION = "nl_generations"

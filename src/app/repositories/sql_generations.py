@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from src.app.models.sql_generation import SQLGeneration
+from app.models.sql_generation import SQLGeneration
 
 DB_COLLECTION = "sql_generations"
 

@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy.sql.schema import Column
 
-from src.app.databases.sql_database import SQLDatabase
-from src.app.models.query_history import QueryHistory
+from app.databases.sql_database import SQLDatabase
+from app.models.query_history import QueryHistory
 
 
 class AbstractScanner(ABC):

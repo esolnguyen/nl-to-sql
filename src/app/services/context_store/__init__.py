@@ -1,11 +1,11 @@
 import os
 from abc import ABC, abstractmethod
 from typing import List, Tuple
-from src.app.databases.mongodb import NlToSQLDatabase
-from src.app.databases.vector import VectorDatabase
-from src.app.models.example_sql import ExampleSQL, ExampleSQLRequest
-from src.app.models.prompt import Prompt
-from src.config import Component, System
+from app.databases.mongodb import NlToSQLDatabase
+from app.databases.vector import VectorDatabase
+from app.models.example_sql import ExampleSQL, ExampleSQLRequest
+from app.models.prompt import Prompt
+from app.config import Component, System
 
 
 class ContextStore(Component, ABC):

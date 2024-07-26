@@ -1,6 +1,6 @@
 import os
 from pydantic import BaseModel, BaseSettings, validator
-from src.app.utils.encrypt import FernetEncrypt
+from app.utils.encrypt import FernetEncrypt
 from typing import Any
 
 

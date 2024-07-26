@@ -6,7 +6,7 @@ from app.models.llm import LLMConfig
 from app.models.nl_generation import NLGeneration
 from app.repositories.nl_generations import NLGenerationNotFoundError, NLGenerationRepository
 from app.repositories.sql_generations import SQLGenerationNotFoundError, SQLGenerationRepository
-from config import System
+from app.config import System
 
 
 

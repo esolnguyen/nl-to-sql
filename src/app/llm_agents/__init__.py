@@ -8,20 +8,20 @@ from typing import Any, List, Tuple
 from langchain.agents.agent import AgentExecutor
 from langchain.schema import AgentAction
 from langchain_community.callbacks import get_openai_callback
-from src.config import Component, System
-from large_language_model.chat_model import ChatModel
-from src.app.models.llm import LLMConfig
-from src.app.models.db_description import TableDescription
-from src.app.models.db_conntection import DatabaseConnection
-from src.app.models.prompt import Prompt
-from src.app.models.sql_generation import IntermediateStep, SQLGeneration
-from src.app.repositories.sql_generations import SQLGenerationRepository
-from src.app.databases.sql_database import (
+from app.config import Component, System
+from app.llm_agents.large_language_model.chat_model import ChatModel
+from app.models.llm import LLMConfig
+from app.models.db_description import TableDescription
+from app.models.db_conntection import DatabaseConnection
+from app.models.prompt import Prompt
+from app.models.sql_generation import IntermediateStep, SQLGeneration
+from app.repositories.sql_generations import SQLGenerationRepository
+from app.databases.sql_database import (
     SQLDatabase,
     SQLInjectionError,
     create_sql_query_status,
 )
-from src.app.utils.strings import contains_line_breaks
+from app.utils.strings import contains_line_breaks
 
 
 class EngineTimeOutORItemLimitError(Exception):

@@ -8,12 +8,12 @@ from sqlalchemy import MetaData, create_engine, inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import OperationalError
 from sshtunnel import SSHTunnelForwarder
-from src.app.models.sql_generation import SQLGeneration
-from src.app.utils.timeout import run_with_timeout
-from src.app.utils.aws_s3 import AWSS3
-from src.app.utils.encrypt import FernetEncrypt
-from src.app.utils.custom_error import CustomError
-from src.app.models.db_conntection import DatabaseConnection
+from app.models.sql_generation import SQLGeneration
+from app.utils.timeout import run_with_timeout
+from app.utils.aws_s3 import AWSS3
+from app.utils.encrypt import FernetEncrypt
+from app.utils.custom_error import CustomError
+from app.models.db_conntection import DatabaseConnection
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from src.app.models.example_sql import ExampleSQL
+from app.models.example_sql import ExampleSQL
 
 DB_COLLECTION = "example_sqls"
 

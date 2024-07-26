@@ -1,9 +1,9 @@
 from sql_metadata import Parser
 
-from src.app.models.db_conntection import DatabaseConnection
-from src.app.models.example_sql import ExampleSQL
-from src.app.models.finetuning import FineTuningRequest
-from src.app.utils.custom_error import SchemaNotSupportedError
+from app.models.db_conntection import DatabaseConnection
+from app.models.example_sql import ExampleSQL
+from app.models.finetuning import FineTuningRequest
+from app.utils.custom_error import SchemaNotSupportedError
 
 
 def extract_the_schemas_from_sql(sql: str) -> list[str]:

@@ -2,7 +2,7 @@ from functools import wraps
 import logging
 from typing import Any, Callable
 from fastapi.responses import JSONResponse
-from src.app.constants.error_mapping import ERROR_MAPPING
+from app.constants.error_mapping import ERROR_MAPPING
 import openai
 from google.api_core.exceptions import GoogleAPIError
 from sqlalchemy.exc import SQLAlchemyError

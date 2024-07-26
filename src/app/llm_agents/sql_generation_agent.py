@@ -11,8 +11,8 @@ from langchain.chains.llm import LLMChain
 from langchain_community.callbacks import get_openai_callback
 from langchain_openai import AzureOpenAIEmbeddings, OpenAIEmbeddings
 from overrides import override
-from src.app.constants.model_contexts import EMBEDDING_MODEL
-from src.app.constants.sql_generation_prompts import (
+from app.constants.model_contexts import EMBEDDING_MODEL
+from app.constants.sql_generation_prompts import (
     AGENT_PREFIX,
     ERROR_PARSING_MESSAGE,
     FORMAT_INSTRUCTIONS,
@@ -23,23 +23,23 @@ from src.app.constants.sql_generation_prompts import (
     SUFFIX_WITH_FEW_SHOT_SAMPLES,
     SUFFIX_WITHOUT_FEW_SHOT_SAMPLES,
 )
-from src.app.databases.mongodb import NlToSQLDatabase
-from src.app.databases.sql_database import SQLDatabase, SQLInjectionError
-from src.app.llm_agents import (
+from app.databases.mongodb import NlToSQLDatabase
+from app.databases.sql_database import SQLDatabase, SQLInjectionError
+from app.llm_agents import (
     EngineTimeOutORItemLimitError,
     SQLGenerator,
     replace_unprocessable_characters,
 )
-from src.app.llm_agents.toolkit.sql_generation_agent_toolkit import (
+from app.llm_agents.toolkit.sql_generation_agent_toolkit import (
     SQLGenerationAgentToolkit,
 )
-from src.app.models.db_conntection import DatabaseConnection
-from src.app.models.db_description import TableDescriptionStatus
-from src.app.models.prompt import Prompt
-from src.app.models.sql_generation import SQLGeneration
-from src.app.repositories.sql_generations import SQLGenerationRepository
-from src.app.repositories.table_descriptions import TableDescriptionRepository
-from src.app.services.context_store import ContextStore
+from app.models.db_conntection import DatabaseConnection
+from app.models.db_description import TableDescriptionStatus
+from app.models.prompt import Prompt
+from app.models.sql_generation import SQLGeneration
+from app.repositories.sql_generations import SQLGenerationRepository
+from app.repositories.table_descriptions import TableDescriptionRepository
+from app.services.context_store import ContextStore
 
 logger = logging.getLogger(__name__)
 

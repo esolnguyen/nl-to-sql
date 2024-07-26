@@ -1,4 +1,4 @@
-from src.config import Settings
+from app.config import Settings
 from src.app.server.fastapi import FastAPI
 
 

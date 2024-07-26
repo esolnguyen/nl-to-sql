@@ -8,14 +8,14 @@ from langchain.prompts.chat import (
 )
 from sqlalchemy import text
 
-from src.app.constants.sql_generation_prompts import HUMAN_TEMPLATE
-from src.app.databases.sql_database import SQLDatabase, SQLInjectionError
-from src.app.llm_agents.large_language_model.chat_model import ChatModel
-from src.app.models.llm import LLMConfig
-from src.app.models.nl_generation import NLGeneration
-from src.app.models.sql_generation import SQLGeneration
-from src.app.repositories.db_connections import DatabaseConnectionRepository
-from src.app.repositories.prompts import PromptRepository
+from app.constants.sql_generation_prompts import HUMAN_TEMPLATE
+from app.databases.sql_database import SQLDatabase, SQLInjectionError
+from app.llm_agents.large_language_model.chat_model import ChatModel
+from app.models.llm import LLMConfig
+from app.models.nl_generation import NLGeneration
+from app.models.sql_generation import SQLGeneration
+from app.repositories.db_connections import DatabaseConnectionRepository
+from app.repositories.prompts import PromptRepository
 
 
 class GeneratesNlAnswer:

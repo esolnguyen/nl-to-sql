@@ -3,11 +3,11 @@ from datetime import datetime
 import pytz
 from pydantic import BaseModel, validator
 
-from src.app.models.db_conntection import DatabaseConnection
-from src.app.models.db_description import TableDescription
-from src.app.models.example_sql import ExampleSQL
-from src.app.models.llm import LLMConfig
-from src.app.models.sql_generation import IntermediateStep
+from app.models.db_conntection import DatabaseConnection
+from app.models.db_description import TableDescription
+from app.models.example_sql import ExampleSQL
+from app.models.llm import LLMConfig
+from app.models.sql_generation import IntermediateStep
 
 
 class BaseResponse(BaseModel):

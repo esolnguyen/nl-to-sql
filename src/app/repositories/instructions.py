@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from src.app.models.instruction import Instruction
+from app.models.instruction import Instruction
 
 DB_COLLECTION = "instructions"
 

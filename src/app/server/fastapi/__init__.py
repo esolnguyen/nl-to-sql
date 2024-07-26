@@ -5,9 +5,7 @@ from fastapi import BackgroundTasks, status
 from fastapi import FastAPI as _FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.routing import APIRoute
-
-from src.app.api.nl_to_sql_api import NLToSQLAPI
-from src.app.api.types.requests import (
+from app.api.types.requests import (
     NLGenerationRequest,
     NLGenerationsSQLGenerationRequest,
     PromptSQLGenerationNLGenerationRequest,
@@ -15,7 +13,7 @@ from src.app.api.types.requests import (
     StreamPromptSQLGenerationRequest,
     UpdateMetadataRequest,
 )
-from src.app.api.types.responses import (
+from app.api.types.responses import (
     DatabaseConnectionResponse,
     ExampleSQLResponse,
     InstructionResponse,
@@ -24,25 +22,25 @@ from src.app.api.types.responses import (
     SQLGenerationResponse,
     TableDescriptionResponse,
 )
-from src.app.models.db_conntection import DatabaseConnection, DatabaseConnectionRequest
-from src.app.models.db_description import (
+from app.models.db_conntection import DatabaseConnection, DatabaseConnectionRequest
+from app.models.db_description import (
     RefreshTableDescriptionRequest,
     ScannerRequest,
     TableDescriptionRequest,
 )
-from src.app.models.example_sql import ExampleSQL, ExampleSQLRequest
-from src.app.models.finetuning import (
+from app.models.example_sql import ExampleSQL, ExampleSQLRequest
+from app.models.finetuning import (
     CancelFineTuningRequest,
     FineTuningRequest,
     Finetuning,
 )
-from src.app.models.instruction import InstructionRequest, UpdateInstruction
-from src.app.models.prompt import PromptRequest
-from src.app.models.query_history import QueryHistory
-from src.app.models.sql_generation import SQLGenerationRequest
-from src.app.server import NlToSQLServer
-from src.app import Settings
-from src import client
+from app.models.instruction import InstructionRequest, UpdateInstruction
+from app.models.prompt import PromptRequest
+from app.models.query_history import QueryHistory
+from app.models.sql_generation import SQLGenerationRequest
+from app.server import NlToSQLServer
+from app.config import Settings, System
+from src.app.databases.mongodb import NlToSQLDatabase
 
 
 def use_route_names_as_operation_ids(app: _FastAPI) -> None:
@@ -55,7 +53,12 @@ class FastAPI(NlToSQLServer):
     def __init__(self, settings: Settings):
         super().__init__(settings)
         self._app = fastapi.FastAPI(debug=True)
-        self._api: NLToSQLAPI = client(settings)
+
+        system = System(settings)
+        api = system.instance(NlToSQLDatabase)
+        system.start()
+
+        self._api: FastAPI = api
 
         self.router = fastapi.APIRouter()
 
@@ -509,7 +512,8 @@ class FastAPI(NlToSQLServer):
         """Exports a CSV file for the given sql_generation_id"""
         stream = self._api.export_csv_file(sql_generation_id)
 
-        response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
+        response = StreamingResponse(
+            iter([stream.getvalue()]), media_type="text/csv")
         response.headers["Content-Disposition"] = (
             f"attachment; filename=sql_generation_{sql_generation_id}.csv"
         )

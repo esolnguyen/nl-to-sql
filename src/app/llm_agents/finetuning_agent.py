@@ -12,37 +12,37 @@ from langchain_community.callbacks import get_openai_callback
 from langchain_openai import AzureOpenAIEmbeddings, OpenAIEmbeddings
 from overrides import override
 from pydantic import Field
-from src.app.constants.finetuning_prompts import (
+from app.constants.finetuning_prompts import (
     FINETUNING_AGENT_PREFIX,
     FINETUNING_AGENT_PREFIX_FINETUNING_ONLY,
     FINETUNING_AGENT_SUFFIX,
 )
-from src.app.constants.model_contexts import EMBEDDING_MODEL
-from src.app.constants.sql_generation_prompts import (
+from app.constants.model_contexts import EMBEDDING_MODEL
+from app.constants.sql_generation_prompts import (
     ERROR_PARSING_MESSAGE,
     FORMAT_INSTRUCTIONS,
 )
-from src.app.databases.mongodb import NlToSQLDatabase
-from src.app.databases.sql_database import SQLDatabase, SQLInjectionError
-from src.app.llm_agents import (
+from app.databases.mongodb import NlToSQLDatabase
+from app.databases.sql_database import SQLDatabase, SQLInjectionError
+from app.llm_agents import (
     EngineTimeOutORItemLimitError,
     SQLGenerator,
     replace_unprocessable_characters,
 )
-from src.app.llm_agents.toolkit.finetuning_agent_toolkit import (
+from app.llm_agents.toolkit.finetuning_agent_toolkit import (
     FineTuningAgentToolkit,
 )
-from src.app.models.db_conntection import DatabaseConnection
-from src.app.models.db_description import TableDescriptionStatus
-from src.app.models.finetuning import FineTuningStatus
-from src.app.models.prompt import Prompt
-from src.app.models.sql_generation import SQLGeneration
-from src.app.repositories.finetunings import FinetuningsRepository
-from src.app.repositories.sql_generations import SQLGenerationRepository
-from src.app.repositories.table_descriptions import TableDescriptionRepository
-from src.app.services.context_store import ContextStore
-from src.app.services.finetuning.openai_finetuning import OpenAIFineTuning
-from src.app.utils.custom_error import FinetuningNotAvailableError
+from app.models.db_conntection import DatabaseConnection
+from app.models.db_description import TableDescriptionStatus
+from app.models.finetuning import FineTuningStatus
+from app.models.prompt import Prompt
+from app.models.sql_generation import SQLGeneration
+from app.repositories.finetunings import FinetuningsRepository
+from app.repositories.sql_generations import SQLGenerationRepository
+from app.repositories.table_descriptions import TableDescriptionRepository
+from app.services.context_store import ContextStore
+from app.services.finetuning.openai_finetuning import OpenAIFineTuning
+from app.utils.custom_error import FinetuningNotAvailableError
 
 logger = logging.getLogger(__name__)
 

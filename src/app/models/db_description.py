@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any
 from bson import ObjectId
 from pydantic import BaseModel, Field, validator
-from src.app.models.db_conntection import DBConnectionValidation
+from app.models.db_conntection import DBConnectionValidation
 from bson.errors import InvalidId
 
 

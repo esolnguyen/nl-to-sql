@@ -8,24 +8,24 @@ from overrides import override
 from sqlalchemy import Column, MetaData, Table, inspect
 from sqlalchemy.schema import CreateTable
 from sqlalchemy.sql.sqltypes import NullType
-from src.app.databases.sql_database import SQLDatabase
-from src.app.models.db_description import (
+from app.databases.sql_database import SQLDatabase
+from app.models.db_description import (
     ColumnDetail,
     ScannerRequest,
     TableDescription,
     TableDescriptionStatus,
 )
-from src.app.repositories.query_histories import QueryHistoryRepository
-from src.app.repositories.table_descriptions import TableDescriptionRepository
-from src.app.services.db_scanner import Scanner
-from src.app.services.db_scanner.types import AbstractScanner
-from src.app.services.db_scanner.types.base_scanner import BaseScanner
-from src.app.services.db_scanner.types.big_query_scanner import BigQueryScanner
-from src.app.services.db_scanner.types.click_house_scanner import ClickHouseScanner
-from src.app.services.db_scanner.types.postgre_sql_scanner import PostgreSqlScanner
-from src.app.services.db_scanner.types.redshift_scanner import RedshiftScanner
-from src.app.services.db_scanner.types.snowflake_scanner import SnowflakeScanner
-from src.app.services.db_scanner.types.sql_server_scanner import SqlServerScanner
+from app.repositories.query_histories import QueryHistoryRepository
+from app.repositories.table_descriptions import TableDescriptionRepository
+from app.services.db_scanner import Scanner
+from app.services.db_scanner.types import AbstractScanner
+from app.services.db_scanner.types.base_scanner import BaseScanner
+from app.services.db_scanner.types.big_query_scanner import BigQueryScanner
+from app.services.db_scanner.types.click_house_scanner import ClickHouseScanner
+from app.services.db_scanner.types.postgre_sql_scanner import PostgreSqlScanner
+from app.services.db_scanner.types.redshift_scanner import RedshiftScanner
+from app.services.db_scanner.types.snowflake_scanner import SnowflakeScanner
+from app.services.db_scanner.types.sql_server_scanner import SqlServerScanner
 
 MIN_CATEGORY_VALUE = 1
 MAX_CATEGORY_VALUE = 60

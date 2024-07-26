@@ -4,15 +4,15 @@ from typing import List, Tuple
 from overrides import override
 from sql_metadata import Parser
 
-from src.app.models.example_sql import ExampleSQL, ExampleSQLRequest
-from src.app.models.prompt import Prompt
-from src.app.repositories.db_connections import DatabaseConnectionRepository
-from src.app.repositories.example_sqls import ExampleSQLRepository
-from src.app.repositories.instructions import InstructionRepository
-from src.app.services.context_store import ContextStore
-from src.app.utils.custom_error import DatabaseConnectionNotFoundError
-from src.app.utils.sql_utils import extract_the_schemas_from_sql
-from src.config import System
+from app.models.example_sql import ExampleSQL, ExampleSQLRequest
+from app.models.prompt import Prompt
+from app.repositories.db_connections import DatabaseConnectionRepository
+from app.repositories.example_sqls import ExampleSQLRepository
+from app.repositories.instructions import InstructionRepository
+from app.services.context_store import ContextStore
+from app.utils.custom_error import DatabaseConnectionNotFoundError
+from app.utils.sql_utils import extract_the_schemas_from_sql
+from app.config import System
 
 logger = logging.getLogger(__name__)
 

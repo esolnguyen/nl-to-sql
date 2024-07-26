@@ -1,11 +1,11 @@
-from src.app.models.prompt import Prompt, PromptRequest
-from src.app.repositories.prompts import PromptRepository
-from src.app.utils.custom_error import (
+from app.models.prompt import Prompt, PromptRequest
+from app.repositories.prompts import PromptRepository
+from app.utils.custom_error import (
     DatabaseConnectionNotFoundError,
     PromptNotFoundError,
     SchemaNotSupportedError,
 )
-from src.app.repositories.db_connections import DatabaseConnectionRepository
+from app.repositories.db_connections import DatabaseConnectionRepository
 
 
 class PromptService:

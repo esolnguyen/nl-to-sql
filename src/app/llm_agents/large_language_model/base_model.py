@@ -1,9 +1,9 @@
 import os
 from langchain_openai import OpenAI
-from src.app.models.db_conntection import DatabaseConnection
-from src.app.utils.encrypt import FernetEncrypt
+from app.models.db_conntection import DatabaseConnection
+from app.utils.encrypt import FernetEncrypt
 from typing import Any, override
-from src.app.models.llm import LargeLanguageModel
+from app.models.llm import LargeLanguageModel
 from langchain.llms import AlephAlpha, Anthropic, AzureOpenAI, Cohere, OpenAI
 
 

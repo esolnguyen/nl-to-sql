@@ -1,4 +1,4 @@
-from src.app.llm_agents import SQLGenerator
+from app.llm_agents import SQLGenerator
 
 
 TOP_TABLES = 20

@@ -13,8 +13,7 @@ from overrides import override
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List
 from fastapi import BackgroundTasks
-from src.app.api import API
-from src.app.api.types.requests import (
+from app.api.types.requests import (
     NLGenerationRequest,
     NLGenerationsSQLGenerationRequest,
     PromptSQLGenerationNLGenerationRequest,
@@ -22,7 +21,7 @@ from src.app.api.types.requests import (
     StreamPromptSQLGenerationRequest,
     UpdateMetadataRequest,
 )
-from src.app.api.types.responses import (
+from app.api.types.responses import (
     DatabaseConnectionResponse,
     ExampleSQLResponse,
     InstructionResponse,
@@ -31,60 +30,61 @@ from src.app.api.types.responses import (
     SQLGenerationResponse,
     TableDescriptionResponse,
 )
-from src.app.databases.mongodb import NlToSQLDatabase
-from src.app.databases.sql_database import SQLDatabase, SQLInjectionError
-from src.app.models.db_conntection import DatabaseConnection, DatabaseConnectionRequest
-from src.app.models.db_description import (
+from app.databases.mongodb import NlToSQLDatabase
+from app.databases.sql_database import SQLDatabase, SQLInjectionError
+from app.models.db_conntection import DatabaseConnection, DatabaseConnectionRequest
+from app.models.db_description import (
     RefreshTableDescriptionRequest,
     ScannerRequest,
     TableDescriptionRequest,
 )
-from src.app.models.example_sql import ExampleSQL, ExampleSQLRequest
-from src.app.models.finetuning import (
+from app.models.example_sql import ExampleSQL, ExampleSQLRequest
+from app.models.finetuning import (
     BaseLLM,
     CancelFineTuningRequest,
     FineTuningRequest,
     FineTuningStatus,
     Finetuning,
 )
-from src.app.models.instruction import Instruction, InstructionRequest, UpdateInstruction
-from src.app.models.prompt import PromptRequest
-from src.app.models.query_history import QueryHistory
-from src.app.models.sql_generation import SQLGenerationRequest
-from src.app.repositories.db_connections import DatabaseConnectionRepository
-from src.app.repositories.example_sqls import (
+from app.models.instruction import Instruction, InstructionRequest, UpdateInstruction
+from app.models.prompt import PromptRequest
+from app.models.query_history import QueryHistory
+from app.models.sql_generation import SQLGenerationRequest
+from app.repositories.db_connections import DatabaseConnectionRepository
+from app.repositories.example_sqls import (
     ExampleSQLNotFoundError,
     ExampleSQLRepository,
 )
-from src.app.repositories.finetunings import FinetuningsRepository
-from src.app.repositories.instructions import InstructionRepository
-from src.app.repositories.nl_generations import NLGenerationNotFoundError
-from src.app.repositories.query_histories import QueryHistoryRepository
-from src.app.repositories.sql_generations import SQLGenerationNotFoundError
-from src.app.repositories.table_descriptions import (
+from app.repositories.finetunings import FinetuningsRepository
+from app.repositories.instructions import InstructionRepository
+from app.repositories.nl_generations import NLGenerationNotFoundError
+from app.repositories.query_histories import QueryHistoryRepository
+from app.repositories.sql_generations import SQLGenerationNotFoundError
+from app.repositories.table_descriptions import (
     InvalidColumnNameError,
     TableDescriptionRepository,
 )
-from src.app.services.context_store import ContextStore
-from src.app.services.database_connection import DatabaseConnectionService
-from src.app.services.db_scanner import Scanner
-from src.app.services.finetuning.openai_finetuning import OpenAIFineTuning
-from src.app.services.nl_generation import NLGenerationService
-from src.app.services.prompt import PromptService
-from src.app.services.sql_generation import SQLGenerationService
-from src.app.utils.custom_error import (
+from app.services.context_store import ContextStore
+from app.services.database_connection import DatabaseConnectionService
+from app.services.db_scanner import Scanner
+from app.services.finetuning.openai_finetuning import OpenAIFineTuning
+from app.services.nl_generation import NLGenerationService
+from app.services.prompt import PromptService
+from app.services.sql_generation import SQLGenerationService
+from app.utils.custom_error import (
     DatabaseConnectionNotFoundError,
     EmptySQLGenerationError,
     PromptNotFoundError,
     error_response,
     stream_error_response,
 )
-from src.app.utils.encrypt import FernetEncrypt
-from src.app.utils.sql_utils import (
+from app.utils.encrypt import FernetEncrypt
+from app.utils.sql_utils import (
     filter_example_records_based_on_schema,
     validate_finetuning_schema,
 )
-from src.config import System
+from app.config import System
+from app.api import API
 
 logger = logging.getLogger(__name__)
 
@@ -149,10 +149,12 @@ class NLToSQLAPI(API):
             scanner_request,
             TableDescriptionRepository(self.storage),
         )
-        database_connection_service = DatabaseConnectionService(scanner, self.storage)
+        database_connection_service = DatabaseConnectionService(
+            scanner, self.storage)
         for db_connection_id, schemas_and_table_descriptions in data.items():
             for schema, table_descriptions in schemas_and_table_descriptions.items():
-                db_connection = db_connection_repository.find_by_id(db_connection_id)
+                db_connection = db_connection_repository.find_by_id(
+                    db_connection_id)
                 database = database_connection_service.get_sql_database(
                     db_connection, schema
                 )
@@ -168,8 +170,10 @@ class NLToSQLAPI(API):
     ) -> DatabaseConnectionResponse:
         try:
             scanner = self.system.instance(Scanner)
-            db_connection_service = DatabaseConnectionService(scanner, self.storage)
-            db_connection = db_connection_service.create(database_connection_request)
+            db_connection_service = DatabaseConnectionService(
+                scanner, self.storage)
+            db_connection = db_connection_service.create(
+                database_connection_request)
         except Exception as e:
             fernet_encrypt = FernetEncrypt()
             database_connection_request.connection_uri = fernet_encrypt.encrypt(
@@ -177,7 +181,8 @@ class NLToSQLAPI(API):
             )
             ssh_settings = database_connection_request.ssh_settings
             if database_connection_request.ssh_settings:
-                ssh_settings.password = fernet_encrypt.encrypt(ssh_settings.password)
+                ssh_settings.password = fernet_encrypt.encrypt(
+                    ssh_settings.password)
                 ssh_settings.private_key_password = fernet_encrypt.encrypt(
                     ssh_settings.private_key_password
                 )
@@ -195,7 +200,8 @@ class NLToSQLAPI(API):
             refresh_table_description.db_connection_id
         )
         scanner = self.system.instance(Scanner)
-        database_connection_service = DatabaseConnectionService(scanner, self.storage)
+        database_connection_service = DatabaseConnectionService(
+            scanner, self.storage)
         try:
             data = {}
             if db_connection.schemas:
@@ -239,8 +245,10 @@ class NLToSQLAPI(API):
         database_connection_request: DatabaseConnectionRequest,
     ) -> DatabaseConnectionResponse:
         try:
-            db_connection_repository = DatabaseConnectionRepository(self.storage)
-            db_connection = db_connection_repository.find_by_id(db_connection_id)
+            db_connection_repository = DatabaseConnectionRepository(
+                self.storage)
+            db_connection = db_connection_repository.find_by_id(
+                db_connection_id)
             if not db_connection:
                 raise DatabaseConnectionNotFoundError(
                     f"Database connection {db_connection_id} not found"
@@ -265,7 +273,8 @@ class NLToSQLAPI(API):
 
             tables = sql_database.get_tables_and_views()
             db_connection = db_connection_repository.update(db_connection)
-            scanner.refresh_tables(tables, str(db_connection.id), scanner_repository)
+            scanner.refresh_tables(tables, str(
+                db_connection.id), scanner_repository)
         except Exception as e:
             fernet_encrypt = FernetEncrypt()
             database_connection_request.connection_uri = fernet_encrypt.encrypt(
@@ -273,7 +282,8 @@ class NLToSQLAPI(API):
             )
             ssh_settings = database_connection_request.ssh_settings
             if ssh_settings:
-                ssh_settings.password = fernet_encrypt.encrypt(ssh_settings.password)
+                ssh_settings.password = fernet_encrypt.encrypt(
+                    ssh_settings.password)
                 ssh_settings.private_key_password = fernet_encrypt.encrypt(
                     ssh_settings.private_key_password
                 )
@@ -314,7 +324,8 @@ class NLToSQLAPI(API):
     ) -> list[TableDescriptionResponse]:
         scanner_repository = TableDescriptionRepository(self.storage)
         table_descriptions = scanner_repository.find_by(
-            {"db_connection_id": str(db_connection_id), "table_name": table_name}
+            {"db_connection_id": str(db_connection_id),
+             "table_name": table_name}
         )
 
         return [
@@ -334,7 +345,8 @@ class NLToSQLAPI(API):
             raise HTTPException(status_code=400, detail=str(e)) from e
 
         if not result:
-            raise HTTPException(status_code=404, detail="Table description not found")
+            raise HTTPException(
+                status_code=404, detail="Table description not found")
         return TableDescriptionResponse(**result.dict())
 
     @override
@@ -345,7 +357,7 @@ class NLToSQLAPI(API):
         except InvalidId as e:
             raise HTTPException(status_code=400, detail=str(e)) from e
         except DatabaseConnectionNotFoundError:
-            raise HTTPException(  # noqa: B904
+            raise HTTPException(
                 status_code=404, detail="Database connection not found"
             )
         return PromptResponse(**prompt.dict())
@@ -359,7 +371,7 @@ class NLToSQLAPI(API):
             raise HTTPException(status_code=400, detail=str(e)) from e
 
         if len(prompts) == 0:
-            raise HTTPException(  # noqa: B904
+            raise HTTPException(
                 status_code=404, detail=f"Prompt {prompt_id} not found"
             )
         return PromptResponse(**prompts[0].dict())
@@ -370,7 +382,8 @@ class NLToSQLAPI(API):
     ) -> PromptResponse:
         prompt_service = PromptService(self.storage)
         try:
-            prompt = prompt_service.update_metadata(prompt_id, update_metadata_request)
+            prompt = prompt_service.update_metadata(
+                prompt_id, update_metadata_request)
         except PromptNotFoundError as e:
             raise HTTPException(status_code=400, detail=str(e)) from e
         return PromptResponse(**prompt.dict())
@@ -413,9 +426,11 @@ class NLToSQLAPI(API):
 
     @override
     def execute_sql_query(self, sql_generation_id: str, max_rows: int = 100) -> list:
-        sql_generation_service = SQLGenerationService(self.system, self.storage)
+        sql_generation_service = SQLGenerationService(
+            self.system, self.storage)
         try:
-            results = sql_generation_service.execute(sql_generation_id, max_rows)
+            results = sql_generation_service.execute(
+                sql_generation_id, max_rows)
         except SQLGenerationNotFoundError as e:
             raise HTTPException(status_code=404, detail=str(e)) from e
         except SQLInjectionError as e:
@@ -428,9 +443,11 @@ class NLToSQLAPI(API):
 
     @override
     def export_csv_file(self, sql_generation_id: str) -> io.StringIO:
-        sql_generation_service = SQLGenerationService(self.system, self.storage)
+        sql_generation_service = SQLGenerationService(
+            self.system, self.storage)
         try:
-            csv_dataframe = sql_generation_service.create_dataframe(sql_generation_id)
+            csv_dataframe = sql_generation_service.create_dataframe(
+                sql_generation_id)
             csv_stream = io.StringIO()
             csv_dataframe.to_csv(csv_stream, index=False)
         except SQLGenerationNotFoundError as e:
@@ -469,7 +486,8 @@ class NLToSQLAPI(API):
         example_sqls_repository = ExampleSQLRepository(self.storage)
         example_sql = example_sqls_repository.find_by_id(example_sql_id)
         if not example_sql:
-            raise HTTPException(status_code=404, detail="Example record not found")
+            raise HTTPException(
+                status_code=404, detail="Example record not found")
         example_sql.metadata = update_metadata_request.metadata
         example_sqls_repository.update(example_sql)
         return example_sql
@@ -479,7 +497,8 @@ class NLToSQLAPI(API):
         self, instruction_request: InstructionRequest
     ) -> InstructionResponse:
         try:
-            db_connection_repository = DatabaseConnectionRepository(self.storage)
+            db_connection_repository = DatabaseConnectionRepository(
+                self.storage)
             db_connection = db_connection_repository.find_by_id(
                 instruction_request.db_connection_id
             )
@@ -513,7 +532,8 @@ class NLToSQLAPI(API):
                 limit=limit,
             )
         else:
-            instructions = instruction_repository.find_all(page=page, limit=limit)
+            instructions = instruction_repository.find_all(
+                page=page, limit=limit)
         result = []
         for instruction in instructions:
             result.append(InstructionResponse(**instruction.dict()))
@@ -524,7 +544,8 @@ class NLToSQLAPI(API):
         instruction_repository = InstructionRepository(self.storage)
         deleted = instruction_repository.delete_by_id(instruction_id)
         if deleted == 0:
-            raise HTTPException(status_code=404, detail="Instruction not found")
+            raise HTTPException(
+                status_code=404, detail="Instruction not found")
         return {"status": "success"}
 
     @override
@@ -536,7 +557,8 @@ class NLToSQLAPI(API):
         instruction_repository = InstructionRepository(self.storage)
         instruction = instruction_repository.find_by_id(instruction_id)
         if not instruction:
-            raise HTTPException(status_code=404, detail="Instruction not found")
+            raise HTTPException(
+                status_code=404, detail="Instruction not found")
         updated_instruction = Instruction(
             id=instruction_id,
             instruction=instruction_request.instruction,
@@ -551,7 +573,8 @@ class NLToSQLAPI(API):
         self, fine_tuning_request: FineTuningRequest, background_tasks: BackgroundTasks
     ) -> Finetuning:
         try:
-            db_connection_repository = DatabaseConnectionRepository(self.storage)
+            db_connection_repository = DatabaseConnectionRepository(
+                self.storage)
             db_connection = db_connection_repository.find_by_id(
                 fine_tuning_request.db_connection_id
             )
@@ -564,7 +587,8 @@ class NLToSQLAPI(API):
             example_sqls = []
             if fine_tuning_request.example_sqls:
                 for example_sql_id in fine_tuning_request.example_sqls:
-                    example_sql = example_sqls_repository.find_by_id(example_sql_id)
+                    example_sql = example_sqls_repository.find_by_id(
+                        example_sql_id)
                     if not example_sql:
                         raise ExampleSQLNotFoundError(
                             f"Example sql not found, {example_sql_id}"
@@ -572,7 +596,8 @@ class NLToSQLAPI(API):
                     example_sqls.append(example_sql)
             else:
                 example_sqls = example_sqls_repository.find_by(
-                    {"db_connection_id": str(fine_tuning_request.db_connection_id)},
+                    {"db_connection_id": str(
+                        fine_tuning_request.db_connection_id)},
                     page=0,
                     limit=0,
                 )
@@ -603,7 +628,8 @@ class NLToSQLAPI(API):
                         else f"{db_connection.alias}_{datetime.datetime.now().strftime('%Y%m%d%H')}"
                     ),
                     base_llm=base_llm,
-                    example_sqls=[str(example_sql.id) for example_sql in example_sqls],
+                    example_sqls=[str(example_sql.id)
+                                  for example_sql in example_sqls],
                     metadata=fine_tuning_request.metadata,
                 )
             )
@@ -612,7 +638,8 @@ class NLToSQLAPI(API):
                 e, fine_tuning_request.dict(), "finetuning_not_created"
             )
 
-        background_tasks.add_task(async_fine_tuning, self.system, self.storage, model)
+        background_tasks.add_task(
+            async_fine_tuning, self.system, self.storage, model)
 
         return model
 
@@ -621,7 +648,8 @@ class NLToSQLAPI(API):
         self, cancel_fine_tuning_request: CancelFineTuningRequest
     ) -> Finetuning:
         model_repository = FinetuningsRepository(self.storage)
-        model = model_repository.find_by_id(cancel_fine_tuning_request.finetuning_id)
+        model = model_repository.find_by_id(
+            cancel_fine_tuning_request.finetuning_id)
         if not model:
             raise HTTPException(status_code=404, detail="Model not found")
 
@@ -651,9 +679,11 @@ class NLToSQLAPI(API):
         models = model_repository.find_by(query)
         result = []
         for model in models:
-            openai_fine_tuning = OpenAIFineTuning(self.system, self.storage, model)
+            openai_fine_tuning = OpenAIFineTuning(
+                self.system, self.storage, model)
             result.append(
-                Finetuning(**openai_fine_tuning.retrieve_finetuning_job().dict())
+                Finetuning(
+                    **openai_fine_tuning.retrieve_finetuning_job().dict())
             )
         return result
 
@@ -691,7 +721,8 @@ class NLToSQLAPI(API):
     ) -> SQLGenerationResponse:
         try:
             ObjectId(prompt_id)
-            sql_generation_service = SQLGenerationService(self.system, self.storage)
+            sql_generation_service = SQLGenerationService(
+                self.system, self.storage)
             sql_generation = sql_generation_service.create(
                 prompt_id, sql_generation_request
             )
@@ -708,8 +739,10 @@ class NLToSQLAPI(API):
     ) -> SQLGenerationResponse:
         try:
             prompt_service = PromptService(self.storage)
-            prompt = prompt_service.create(prompt_sql_generation_request.prompt)
-            sql_generation_service = SQLGenerationService(self.system, self.storage)
+            prompt = prompt_service.create(
+                prompt_sql_generation_request.prompt)
+            sql_generation_service = SQLGenerationService(
+                self.system, self.storage)
             sql_generation = sql_generation_service.create(
                 prompt.id, prompt_sql_generation_request
             )
@@ -723,7 +756,8 @@ class NLToSQLAPI(API):
     def get_sql_generations(
         self, prompt_id: str | None = None
     ) -> list[SQLGenerationResponse]:
-        sql_generation_service = SQLGenerationService(self.system, self.storage)
+        sql_generation_service = SQLGenerationService(
+            self.system, self.storage)
         query = {}
         if prompt_id:
             query["prompt_id"] = prompt_id
@@ -735,7 +769,8 @@ class NLToSQLAPI(API):
 
     @override
     def get_sql_generation(self, sql_generation_id: str) -> SQLGenerationResponse:
-        sql_generation_service = SQLGenerationService(self.system, self.storage)
+        sql_generation_service = SQLGenerationService(
+            self.system, self.storage)
         try:
             sql_generations = sql_generation_service.get(
                 {"_id": ObjectId(sql_generation_id)}
@@ -753,7 +788,8 @@ class NLToSQLAPI(API):
     def update_sql_generation(
         self, sql_generation_id: str, update_metadata_request: UpdateMetadataRequest
     ) -> SQLGenerationResponse:
-        sql_generation_service = SQLGenerationService(self.system, self.storage)
+        sql_generation_service = SQLGenerationService(
+            self.system, self.storage)
         try:
             sql_generation = sql_generation_service.update_metadata(
                 sql_generation_id, update_metadata_request
@@ -768,7 +804,8 @@ class NLToSQLAPI(API):
     ) -> NLGenerationResponse:
         try:
             ObjectId(sql_generation_id)
-            nl_generation_service = NLGenerationService(self.system, self.storage)
+            nl_generation_service = NLGenerationService(
+                self.system, self.storage)
             nl_generation = nl_generation_service.create(
                 sql_generation_id, nl_generation_request
             )
@@ -792,11 +829,13 @@ class NLToSQLAPI(API):
     ) -> NLGenerationResponse:
         try:
             ObjectId(prompt_id)
-            sql_generation_service = SQLGenerationService(self.system, self.storage)
+            sql_generation_service = SQLGenerationService(
+                self.system, self.storage)
             sql_generation = sql_generation_service.create(
                 prompt_id, nl_generation_sql_generation_request.sql_generation
             )
-            nl_generation_service = NLGenerationService(self.system, self.storage)
+            nl_generation_service = NLGenerationService(
+                self.system, self.storage)
             nl_generation = nl_generation_service.create(
                 sql_generation.id, nl_generation_sql_generation_request
             )
@@ -819,12 +858,15 @@ class NLToSQLAPI(API):
         prompt_service = PromptService(self.storage)
         try:
             prompt = prompt_service.create(request.sql_generation.prompt)
-            sql_generation_service = SQLGenerationService(self.system, self.storage)
+            sql_generation_service = SQLGenerationService(
+                self.system, self.storage)
             sql_generation = sql_generation_service.create(
                 prompt.id, request.sql_generation
             )
-            nl_generation_service = NLGenerationService(self.system, self.storage)
-            nl_generation = nl_generation_service.create(sql_generation.id, request)
+            nl_generation_service = NLGenerationService(
+                self.system, self.storage)
+            nl_generation = nl_generation_service.create(
+                sql_generation.id, request)
         except Exception as e:
             return error_response(e, request.dict(), "nl_generation_not_created")
 
@@ -883,7 +925,8 @@ class NLToSQLAPI(API):
             queue = Queue()
             prompt_service = PromptService(self.storage)
             prompt = prompt_service.create(request.prompt)
-            sql_generation_service = SQLGenerationService(self.system, self.storage)
+            sql_generation_service = SQLGenerationService(
+                self.system, self.storage)
             sql_generation_service.start_streaming(prompt.id, request, queue)
             while True:
                 value = queue.get()
@@ -894,5 +937,6 @@ class NLToSQLAPI(API):
                 await asyncio.sleep(0.001)
         except Exception as e:
             yield json.dumps(
-                stream_error_response(e, request.dict(), "nl_generation_not_created")
+                stream_error_response(
+                    e, request.dict(), "nl_generation_not_created")
             )

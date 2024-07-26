@@ -3,9 +3,9 @@ from overrides import override
 from sqlalchemy.sql import func
 from sqlalchemy.sql.schema import Column
 
-from src.app.databases.sql_database import SQLDatabase
-from src.app.models.query_history import QueryHistory
-from src.app.services.db_scanner import AbstractScanner
+from app.databases.sql_database import SQLDatabase
+from app.models.query_history import QueryHistory
+from app.services.db_scanner import AbstractScanner
 
 MIN_CATEGORY_VALUE = 1
 MAX_CATEGORY_VALUE = 100

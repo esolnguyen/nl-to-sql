@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from enum import Enum
-from src.app.constants.model_contexts import OPENAI_FINETUNING_MODELS_WINDOW_SIZES
+from app.constants.model_contexts import OPENAI_FINETUNING_MODELS_WINDOW_SIZES
 
 
 class BaseLLM(BaseModel):
@@ -12,7 +12,7 @@ class BaseLLM(BaseModel):
     @validator("model_name")
     def validate_model_name(cls, v: str | None):
         if v and v not in OPENAI_FINETUNING_MODELS_WINDOW_SIZES:
-            raise ValueError(f"Model {v} not supported")  # noqa: B904
+            raise ValueError(f"Model {v} not supported")
         return v
 
 

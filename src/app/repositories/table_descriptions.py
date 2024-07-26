@@ -1,7 +1,7 @@
 from typing import List
 from bson.objectid import ObjectId
 from pymongo import ASCENDING
-from src.app.models.db_description import TableDescription
+from app.models.db_description import TableDescription
 
 DB_COLLECTION = "table_descriptions"
 

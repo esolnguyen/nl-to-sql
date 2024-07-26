@@ -1,4 +1,4 @@
-from src.app.models.query_history import QueryHistory
+from app.models.query_history import QueryHistory
 
 
 DB_COLLECTION = "query_history"

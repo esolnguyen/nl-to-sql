@@ -1,4 +1,4 @@
-from src.app.models.db_conntection import DBConnectionValidation
+from app.models.db_conntection import DBConnectionValidation
 from pydantic import BaseModel, Field
 from datetime import datetime
 

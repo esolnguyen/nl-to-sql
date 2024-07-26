@@ -1,7 +1,7 @@
 from pydantic import BaseModel, validator
 from sql_metadata import Parser
 
-from src.app.models.llm import LLMConfig
+from app.models.llm import LLMConfig
 
 
 class PromptRequest(BaseModel):
@@ -22,9 +22,10 @@ class SQLGenerationRequest(BaseModel):
     @validator("sql")
     def validate_model_name(cls, v: str | None):
         try:
-            Parser(v).tables  # noqa: B018
+            Parser(v).tables
         except Exception as e:
-            raise ValueError(f"SQL {v} is malformed. Please check the syntax.") from e
+            raise ValueError(
+                f"SQL {v} is malformed. Please check the syntax.") from e
         return v
 
 

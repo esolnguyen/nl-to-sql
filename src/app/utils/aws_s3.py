@@ -1,9 +1,9 @@
 import os
 import boto3
 from cryptography.fernet import InvalidToken
-from src.config import Settings
-from src.app.utils.encrypt import FernetEncrypt
-from src.app.models.db_conntection import FileStorage
+from app.config import Settings
+from app.utils.encrypt import FernetEncrypt
+from app.models.db_conntection import FileStorage
 
 
 class AWSS3:

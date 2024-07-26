@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from src.app.models.finetuning import Finetuning
-from src.config import Component
+from app.models.finetuning import Finetuning
+from app.config import Component
 
 
 class FinetuningModel(Component, ABC):

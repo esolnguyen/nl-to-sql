@@ -3,24 +3,24 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from datetime import datetime
 from queue import Queue
 import pandas as pd
-from src.app.models.llm import LLMConfig
-from src.app.models.sql_generation import SQLGeneration, SQLGenerationRequest
-from src.app.repositories.prompts import PromptRepository
-from src.app.repositories.sql_generations import (
+from app.models.llm import LLMConfig
+from app.models.sql_generation import SQLGeneration, SQLGenerationRequest
+from app.repositories.prompts import PromptRepository
+from app.repositories.sql_generations import (
     SQLGenerationNotFoundError,
     SQLGenerationRepository,
 )
-from src.app.models.prompt import Prompt
-from src.app.llm_agents.finetuning_agent import FinetuningAgent
-from src.app.llm_agents.sql_generation_agent import SQLGenerationAgent
-from src.app.utils.custom_error import (
+from app.models.prompt import Prompt
+from app.llm_agents.finetuning_agent import FinetuningAgent
+from app.llm_agents.sql_generation_agent import SQLGenerationAgent
+from app.utils.custom_error import (
     EmptySQLGenerationError,
     PromptNotFoundError,
     SQLGenerationError,
 )
-from src.app.databases.sql_database import SQLDatabase, create_sql_query_status
-from src.config import System
-from src.app.repositories.db_connections import DatabaseConnectionRepository
+from app.databases.sql_database import SQLDatabase, create_sql_query_status
+from app.config import System
+from app.repositories.db_connections import DatabaseConnectionRepository
 
 
 class SQLGenerationService:

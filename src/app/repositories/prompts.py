@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 
-from src.app.models.prompt import Prompt
+from app.models.prompt import Prompt
 
 DB_COLLECTION = "prompts"
 

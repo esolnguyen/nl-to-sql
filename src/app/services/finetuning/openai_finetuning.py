@@ -11,19 +11,19 @@ from openai import OpenAI
 from overrides import override
 from sql_metadata import Parser
 from tiktoken import Encoding
-from src.app.constants.finetuning_prompts import FINETUNING_SYSTEM_INFORMATION
-from src.app.constants.model_contexts import (
+from app.constants.finetuning_prompts import FINETUNING_SYSTEM_INFORMATION
+from app.constants.model_contexts import (
     EMBEDDING_MODEL,
     OPENAI_FINETUNING_MODELS_WINDOW_SIZES,
 )
-from src.app.models.db_description import TableDescription, TableDescriptionStatus
-from src.app.models.finetuning import FineTuningStatus, Finetuning
-from src.app.repositories.db_connections import DatabaseConnectionRepository
-from src.app.repositories.example_sqls import ExampleSQLRepository
-from src.app.repositories.finetunings import FinetuningsRepository
-from src.app.repositories.table_descriptions import TableDescriptionRepository
-from src.app.services.finetuning import FinetuningModel
-from src.config import System
+from app.models.db_description import TableDescription, TableDescriptionStatus
+from app.models.finetuning import FineTuningStatus, Finetuning
+from app.repositories.db_connections import DatabaseConnectionRepository
+from app.repositories.example_sqls import ExampleSQLRepository
+from app.repositories.finetunings import FinetuningsRepository
+from app.repositories.table_descriptions import TableDescriptionRepository
+from app.services.finetuning import FinetuningModel
+from app.config import System
 
 FILE_PROCESSING_ATTEMPTS = 20
 CATEGORICAL_COLUMNS_THRESHOLD = 60

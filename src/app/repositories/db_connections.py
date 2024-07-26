@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from src.app.models.db_conntection import DatabaseConnection
+from app.models.db_conntection import DatabaseConnection
 
 DB_COLLECTION = "database_connections"
 

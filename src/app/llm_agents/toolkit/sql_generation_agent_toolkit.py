@@ -1,5 +1,5 @@
 from typing import List
-from src.app.llm_agents.toolkit import AgentToolkit
+from app.llm_agents.toolkit import AgentToolkit
 from langchain.tools.base import BaseTool
 from overrides import override
 import datetime
@@ -18,12 +18,12 @@ from langchain_openai import OpenAIEmbeddings
 from pydantic import BaseModel, Field
 from sql_metadata import Parser
 from sqlalchemy.exc import SQLAlchemyError
-from src.app.llm_agents import replace_unprocessable_characters
-from src.app.models.db_description import TableDescription
-from src.app.constants.sql import TOP_K, TOP_TABLES
-from src.app.utils.custom_error import catch_exceptions
-from src.app.databases.sql_database import SQLDatabase
-from src.app.utils.timeout import run_with_timeout
+from app.llm_agents import replace_unprocessable_characters
+from app.models.db_description import TableDescription
+from app.constants.sql import TOP_K, TOP_TABLES
+from app.utils.custom_error import catch_exceptions
+from app.databases.sql_database import SQLDatabase
+from app.utils.timeout import run_with_timeout
 
 logger = logging.getLogger(__name__)
 

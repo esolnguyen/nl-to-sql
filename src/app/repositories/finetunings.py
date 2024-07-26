@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from src.app.models.finetuning import Finetuning
+from app.models.finetuning import Finetuning
 
 DB_COLLECTION = "finetunings"
 

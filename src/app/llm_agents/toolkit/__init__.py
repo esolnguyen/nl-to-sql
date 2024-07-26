@@ -1,14 +1,14 @@
-from abc import ABC, abstractmethod
+from abc import  ABC, abstractmethod
 from typing import List
 from langchain.agents.agent_toolkits.base import BaseToolkit
 from langchain.tools.base import BaseTool
 from langchain_openai import OpenAIEmbeddings
 from pydantic import Field
-from src.app.models.db_description import TableDescription
-from src.app.databases.sql_database import SQLDatabase
+from app.models.db_description import TableDescription
+from app.databases.sql_database import SQLDatabase
 
 
-class AgentToolkit(ABC, BaseToolkit):
+class AgentToolkit(BaseToolkit, ABC):
     db: SQLDatabase = Field(exclude=True)
     context: List[dict] | None = Field(exclude=True, default=None)
     few_shot_examples: List[dict] | None = Field(exclude=True, default=None)

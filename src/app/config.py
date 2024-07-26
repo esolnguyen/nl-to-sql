@@ -9,34 +9,30 @@ from overrides import EnforceOverrides
 from pydantic import BaseSettings
 
 _abstract_type_keys: Dict[str, str] = {
-    "nl_to_sql.api.API": "api_impl",
-    "nl_to_sql.db_scanner.Scanner": "db_scanner_impl",
-    "nl_to_sql.eval.Evaluator": "eval_impl",
-    "nl_to_sql.db.DB": "db_impl",
-    "nl_to_sql.context_store.ContextStore": "context_store_impl",
-    "nl_to_sql.vector_store.VectorStore": "vector_store_impl",
+    "src.app.api.API": "api_impl",
+    "src.app.services.db_scanner.Scanner": "db_scanner_impl",
+    "src.app.databases.mongodb.NlToSQLDatabase": "db_impl",
+    "src.app.services.context_store.ContextStore": "context_store_impl",
+    "src.app.databases.vector.VectorDatabase": "vector_store_impl",
 }
 
 
 class Settings(BaseSettings):
     load_dotenv()
 
-    api_impl: str = os.environ.get("API_SERVER", "nl_to_sql.api.fastapi.FastAPI")
+    api_impl: str = os.environ.get("API_SERVER", "api.nl_to_sql_api.NLToSQLAPI")
 
     db_scanner_impl: str = os.environ.get(
-        "DB_SCANNER", "nl_to_sql.db_scanner.sqlalchemy.SqlAlchemyScanner"
+        "DB_SCANNER", "services.db_scanner.SqlAlchemyScannerService"
     )
 
-    eval_impl: str = os.environ.get(
-        "EVALUATOR", "nl_to_sql.eval.simple_evaluator.SimpleEvaluator"
-    )
-    db_impl: str = os.environ.get("DB", "nl_to_sql.db.mongo.MongoDB")
+    db_impl: str = os.environ.get("NL_TO_SQL_DB", "databases.mongodb.mongo.MongoDB")
 
     context_store_impl: str = os.environ.get(
-        "CONTEXT_STORE", "nl_to_sql.context_store.default.DefaultContextStore"
+        "CONTEXT_STORE", "services.context_store.context_store.ContextStoreService"
     )
     vector_store_impl: str = os.environ.get(
-        "VECTOR_STORE", "nl_to_sql.vector_store.chroma.Chroma"
+        "VECTOR_STORE", "databases.vector.chroma.Chroma"
     )
 
     db_name: str | None = os.environ.get("MONGODB_DB_NAME")
@@ -48,7 +44,7 @@ class Settings(BaseSettings):
     s3_region: str | None = os.environ.get("S3_REGION", "us-east-1")
     s3_aws_access_key_id: str | None = os.environ.get("S3_AWS_ACCESS_KEY_ID")
     s3_aws_secret_access_key: str | None = os.environ.get("S3_AWS_SECRET_ACCESS_KEY")
-    # Needed for Azure OpenAI integration:
+
     azure_api_key: str | None = os.environ.get("AZURE_API_KEY")
     embedding_model: str | None = os.environ.get("EMBEDDING_MODEL")
     azure_api_version: str | None = os.environ.get("AZURE_API_VERSION")
@@ -72,7 +68,7 @@ T = TypeVar("T", bound="Component")
 class Component(ABC, EnforceOverrides):
     _running: bool
 
-    def __init__(self, system: "System"):  # noqa: ARG002
+    def __init__(self, system: "System"): 
         self._running = False
 
     def stop(self) -> None:
@@ -119,7 +115,7 @@ class System(Component):
 C = TypeVar("C")
 
 
-def get_class(fqn: str, type: Type[C]) -> Type[C]:  # noqa: ARG001
+def get_class(fqn: str, type: Type[C]) -> Type[C]: 
     """Given a fully qualifed class name, import the module and return the class"""
     module_name, class_name = fqn.rsplit(".", 1)
     module = importlib.import_module(module_name)
