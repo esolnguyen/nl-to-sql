@@ -1,0 +1,24 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local data
+dbdata/
+postgres_data/
+NLTOSQL/
+tmp/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+.DS_Store

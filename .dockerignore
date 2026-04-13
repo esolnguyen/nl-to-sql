@@ -1,0 +1,27 @@
+.git
+.gitignore
+.env
+.env.example
+.dockerignore
+
+# local data volumes
+dbdata/
+postgres_data/
+NLTOSQL/
+tmp/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+.DS_Store
