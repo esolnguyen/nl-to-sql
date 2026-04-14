@@ -1,12 +1,24 @@
 # Secrets
 .env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
 *.egg-info/
+*.whl
+dist/
+build/
+.eggs/
 .venv/
 venv/
+env/
+ENV/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -17,8 +29,22 @@ postgres_data/
 NLTOSQL/
 tmp/
 
-# Editors
+# Editors / IDE
 .vscode/
 .idea/
 *.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
