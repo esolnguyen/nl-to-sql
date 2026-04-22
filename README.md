@@ -9,16 +9,16 @@ It is designed as a long-running backend service: schemas are scanned once and c
 ## Features
 
 - **NL → SQL generation** via a LangChain agent that has tools for: schema introspection, example-SQL retrieval (vector search), instruction lookup, and dry-run execution.
-- **NL answer generation** — optional follow-up step that summarises the query result in natural language.
+- **NL answer generation** optional follow-up step that summarises the query result in natural language.
 - **Streaming endpoint** for incremental SQL generation over Server-Sent Events.
-- **Multi-database support** — Postgres, MySQL, MSSQL, BigQuery, Snowflake, Databricks, Redshift, ClickHouse, Athena, DuckDB, SQLite.
-- **Schema scanning** — pulls table/column metadata and sample values once, persists them, and exposes endpoints to re-scan or refresh.
-- **Example SQLs (few-shot store)** — example NL/SQL pairs are embedded into a vector store (Chroma by default; Pinecone and Astra also wired in) and retrieved at generation time.
-- **Per-DB instructions** — natural-language guidance ("`status = 'A'` means active") that is fed into every prompt.
-- **OpenAI fine-tuning pipeline** — turns your stored example SQLs into a JSONL dataset, kicks off a fine-tune job, polls status, and routes future generations to the resulting model when configured.
+- **Multi-database support** Postgres, MySQL, MSSQL, BigQuery, Snowflake, Databricks, Redshift, ClickHouse, Athena, DuckDB, SQLite.
+- **Schema scanning** pulls table/column metadata and sample values once, persists them, and exposes endpoints to re-scan or refresh.
+- **Example SQLs (few-shot store)** example NL/SQL pairs are embedded into a vector store (Chroma by default; Pinecone and Astra also wired in) and retrieved at generation time.
+- **Per-DB instructions** natural-language guidance ("`status = 'A'` means active") that is fed into every prompt.
+- **OpenAI fine-tuning pipeline** turns your stored example SQLs into a JSONL dataset, kicks off a fine-tune job, polls status, and routes future generations to the resulting model when configured.
 - **CSV export** for query results, optionally streamed to S3/MinIO.
-- **Credential encryption at rest** — connection URIs, SSH passwords, and per-DB LLM API keys are Fernet-encrypted before persistence.
-- **Pluggable storage and DI** — API server, metadata store, vector store, context store, and DB scanner are all selected via env vars and resolved by a tiny custom DI container.
+- **Credential encryption at rest** connection URIs, SSH passwords, and per-DB LLM API keys are Fernet-encrypted before persistence.
+- **Pluggable storage and DI** API server, metadata store, vector store, context store, and DB scanner are all selected via env vars and resolved by a tiny custom DI container.
 
 ---
 
@@ -55,11 +55,11 @@ It is designed as a long-running backend service: schemas are scanned once and c
 └──────────────────┘    └────────────────────┘    └──────────────────────────┘
 ```
 
-### Request flow — "ask a question"
+### Request flow "ask a question"
 
 1. Client posts a `Prompt` (text + `db_connection_id`) to `/api/v1/prompts/sql-generations`.
 2. `SQLGenerationService` looks up the connection, instantiates the right agent (fine-tuned vs general), pulls relevant example SQLs from the vector store and instructions from Mongo, and runs the LangChain agent loop.
-3. The agent calls its tools — schema lookup, similar-example search, dry-run query — until it converges on a final SQL string.
+3. The agent calls its tools schema lookup, similar-example search, dry-run query until it converges on a final SQL string.
 4. The result is persisted as a `SQLGeneration`, returned to the client, and (optionally) executed via `/execute` or summarised via `/nl-generations`.
 
 ### Dependency injection
@@ -143,17 +143,17 @@ All configuration is read from environment variables (`.env` is auto-loaded by `
 
 All routes are under `/api/v1`. A non-exhaustive map:
 
-**Database connections** — `POST/GET/PUT /database-connections[/{id}]`
-**Table descriptions / schema scan** — `POST /table-descriptions/sync-schemas`, `POST /table-descriptions/refresh`, `GET/PUT /table-descriptions[/{id}]`
-**Prompts** — `POST/GET/PUT /prompts[/{id}]`
-**SQL generation** — `POST /prompts/{prompt_id}/sql-generations`, `POST /prompts/sql-generations` (one-shot prompt + SQL), `GET/PUT /sql-generations[/{id}]`, `GET /sql-generations/{id}/execute`, `GET /sql-generations/{id}/csv-file`
-**NL generation** — `POST /sql-generations/{id}/nl-generations`, `POST /prompts/{id}/sql-generations/nl-generations`, `POST /prompts/sql-generations/nl-generations`, `GET/PUT /nl-generations[/{id}]`
-**Streaming** — `POST /stream-sql-generation` (Server-Sent Events)
-**Example SQLs** — `POST/GET/PUT/DELETE /example-sqls[/{id}]`
-**Instructions** — `POST/GET/PUT/DELETE /instructions[/{id}]`
-**Fine-tuning** — `POST/GET/PUT/DELETE /finetunings[/{id}]`, `POST /finetunings/{id}/cancel`
-**Query history** — `GET /query-history`
-**System** — `GET /heartbeat`
+**Database connections** `POST/GET/PUT /database-connections[/{id}]`
+**Table descriptions / schema scan** `POST /table-descriptions/sync-schemas`, `POST /table-descriptions/refresh`, `GET/PUT /table-descriptions[/{id}]`
+**Prompts** `POST/GET/PUT /prompts[/{id}]`
+**SQL generation** `POST /prompts/{prompt_id}/sql-generations`, `POST /prompts/sql-generations` (one-shot prompt + SQL), `GET/PUT /sql-generations[/{id}]`, `GET /sql-generations/{id}/execute`, `GET /sql-generations/{id}/csv-file`
+**NL generation** `POST /sql-generations/{id}/nl-generations`, `POST /prompts/{id}/sql-generations/nl-generations`, `POST /prompts/sql-generations/nl-generations`, `GET/PUT /nl-generations[/{id}]`
+**Streaming** `POST /stream-sql-generation` (Server-Sent Events)
+**Example SQLs** `POST/GET/PUT/DELETE /example-sqls[/{id}]`
+**Instructions** `POST/GET/PUT/DELETE /instructions[/{id}]`
+**Fine-tuning** `POST/GET/PUT/DELETE /finetunings[/{id}]`, `POST /finetunings/{id}/cancel`
+**Query history** `GET /query-history`
+**System** `GET /heartbeat`
 
 The full schema is browseable at `/docs` once the server is running.
 
@@ -213,11 +213,11 @@ requirements.txt
 ## Typical workflow
 
 1. **Create a database connection** (`POST /api/v1/database-connections`) with a SQLAlchemy URI; URI and credentials are encrypted before storage.
-2. **Sync schemas** (`POST /api/v1/table-descriptions/sync-schemas`) — kicks off a background scan that populates table/column metadata.
+2. **Sync schemas** (`POST /api/v1/table-descriptions/sync-schemas`) kicks off a background scan that populates table/column metadata.
 3. **(Optional) seed examples** (`POST /api/v1/example-sqls`) and **instructions** (`POST /api/v1/instructions`) so the agent has few-shot context.
-4. **(Optional) fine-tune** — `POST /api/v1/finetunings` builds a dataset from your example SQLs and kicks off an OpenAI fine-tune job. New SQL generations against that DB will automatically use the fine-tuned model when present.
-5. **Ask questions** — `POST /api/v1/prompts/sql-generations` with `{prompt: {text, db_connection_id}, ...}` to get back generated SQL. Hit `/execute` to run it, or `/nl-generations` to get a natural-language answer back.
-6. **Stream** — for interactive UIs, `POST /api/v1/stream-sql-generation` returns SSE chunks as the agent generates.
+4. **(Optional) fine-tune** `POST /api/v1/finetunings` builds a dataset from your example SQLs and kicks off an OpenAI fine-tune job. New SQL generations against that DB will automatically use the fine-tuned model when present.
+5. **Ask questions** `POST /api/v1/prompts/sql-generations` with `{prompt: {text, db_connection_id}, ...}` to get back generated SQL. Hit `/execute` to run it, or `/nl-generations` to get a natural-language answer back.
+6. **Stream** for interactive UIs, `POST /api/v1/stream-sql-generation` returns SSE chunks as the agent generates.
 
 ---
 
@@ -227,13 +227,13 @@ requirements.txt
 pytest
 ```
 
-(There is no test suite checked in yet — `pytest` is wired up so contributions can land alongside fixtures.)
+(There is no test suite checked in yet `pytest` is wired up so contributions can land alongside fixtures.)
 
 ---
 
 ## Operational notes
 
 - **Fernet key rotation** is not implemented. If you change `ENCRYPT_KEY`, every previously-stored connection URI / SSH password / per-DB LLM key becomes unreadable. Plan for this.
-- **Background tasks** (schema scans, fine-tuning) use FastAPI `BackgroundTasks`. They run in Starlette's threadpool — fine for one-off scans, but for high concurrency or jobs > a few minutes, move them to a real worker (Celery / arq / RQ).
+- **Background tasks** (schema scans, fine-tuning) use FastAPI `BackgroundTasks`. They run in Starlette's threadpool fine for one-off scans, but for high concurrency or jobs > a few minutes, move them to a real worker (Celery / arq / RQ).
 - **Query execution** is gated by `SQL_EXECUTION_TIMEOUT` and `UPPER_LIMIT_QUERY_RETURN_ROWS`. Read those before pointing this at production data.
 - **Generated SQL is executed.** The agent has a dry-run tool, but ultimately the `/execute` endpoint runs whatever the model produced. Use a least-privileged DB user.
