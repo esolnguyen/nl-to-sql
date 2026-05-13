@@ -37,7 +37,7 @@ class SQLGenerationService:
             prompt_id, sql_generation_request.llm_config
         )
         self.sql_generation_repository.insert(initial_sql_generation)
-        prompt = self._get_promp_by_id(prompt_id)
+        prompt = self._get_prompt_by_id(prompt_id, initial_sql_generation)
         db_connection = self._get_db_connection_by_id(prompt.db_connection_id)
         database = SQLDatabase.get_sql_engine(db_connection, True)
 
@@ -56,7 +56,7 @@ class SQLGenerationService:
                 raise SQLGenerationError(str(e), initial_sql_generation.id) from e
         else:
             sql_generator = self._create_generator_agent(
-                prompt_id, sql_generation_request
+                sql_generation_request, initial_sql_generation
             )
             try:
                 with ThreadPoolExecutor(max_workers=1) as executor:
@@ -92,9 +92,11 @@ class SQLGenerationService:
             prompt_id, sql_generation_request.llm_config
         )
         self.sql_generation_repository.insert(initial_sql_generation)
-        prompt = self._get_promp_by_id(prompt_id)
+        prompt = self._get_prompt_by_id(prompt_id, initial_sql_generation)
         db_connection = self._get_db_connection_by_id(prompt.db_connection_id)
-        sql_generator = self._create_generator_agent(prompt_id, sql_generation_request)
+        sql_generator = self._create_generator_agent(
+            sql_generation_request, initial_sql_generation
+        )
         try:
             sql_generator.stream_response(
                 user_prompt=prompt,
@@ -176,7 +178,7 @@ class SQLGenerationService:
         initial_sql_generation.intermediate_steps = sql_generation.intermediate_steps
         return self.sql_generation_repository.update(initial_sql_generation)
 
-    def _get_promp_by_id(
+    def _get_prompt_by_id(
         self, prompt_id: str, initial_sql_generation: SQLGeneration
     ) -> Prompt:
         prompt = self.prompt_repository.find_by_id(prompt_id)

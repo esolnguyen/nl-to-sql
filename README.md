@@ -27,12 +27,12 @@ It is designed as a long-running backend service: schemas are scanned once and c
 ```
                 ┌──────────────────────────────────────┐
                 │              FastAPI                 │
-                │   (src/app/server/fastapi/__init__)  │
+                │   (src/server/fastapi/__init__)      │
                 └───────────────┬──────────────────────┘
                                 │
                 ┌───────────────▼──────────────────────┐
                 │   API abstract class + NLToSQLAPI    │
-                │       (src/app/api/…)                │
+                │       (src/api/…)                    │
                 └───────────────┬──────────────────────┘
                                 │
         ┌───────────────────────┼───────────────────────────────┐
@@ -64,7 +64,7 @@ It is designed as a long-running backend service: schemas are scanned once and c
 
 ### Dependency injection
 
-`Settings` (in `src/app/config.py`) pulls implementation FQNs out of environment variables (`API_SERVER`, `DB_SCANNER`, `NL_TO_SQL_DB`, `VECTOR_STORE`, `CONTEXT_STORE`). `System.instance(SomeAbstractClass)` walks the `_abstract_type_keys` map, imports the configured implementation, instantiates it once, and caches it. This is what allows you to swap Mongo for another metadata store or Chroma for Pinecone without touching call sites.
+`Settings` (in `src/config.py`) pulls implementation FQNs out of environment variables (`API_SERVER`, `DB_SCANNER`, `NL_TO_SQL_DB`, `VECTOR_STORE`, `CONTEXT_STORE`). `System.instance(SomeAbstractClass)` walks the `_abstract_type_keys` map, imports the configured implementation, instantiates it once, and caches it. This is what allows you to swap Mongo for another metadata store or Chroma for Pinecone without touching call sites.
 
 ---
 
@@ -116,11 +116,11 @@ All configuration is read from environment variables (`.env` is auto-loaded by `
 
 | Variable | Default |
 |---|---|
-| `API_SERVER` | `app.api.nl_to_sql_api.NLToSQLAPI` |
-| `NL_TO_SQL_DB` | `app.databases.mongodb.mongo.MongoDB` |
-| `VECTOR_STORE` | `app.databases.vector.chroma.Chroma` |
-| `CONTEXT_STORE` | `app.services.context_store.context_store.ContextStoreService` |
-| `DB_SCANNER` | `app.services.db_scanner.SqlAlchemyScannerService` |
+| `API_SERVER` | `api.nl_to_sql_api.NLToSQLAPI` |
+| `NL_TO_SQL_DB` | `databases.mongodb.mongo.MongoDB` |
+| `VECTOR_STORE` | `databases.vector.chroma.Chroma` |
+| `CONTEXT_STORE` | `services.context_store.context_store.ContextStoreService` |
+| `DB_SCANNER` | `services.db_scanner.SqlAlchemyScannerService` |
 
 ### Optional
 
@@ -163,47 +163,46 @@ The full schema is browseable at `/docs` once the server is running.
 
 ```
 src/
-  main.py                                uvicorn entry point
-  app/
-    config.py                            Settings + System (DI container)
-    api/
-      __init__.py                        API abstract class
-      nl_to_sql_api.py                   concrete API implementation
-      types/                             pydantic request/response models
-    server/
-      __init__.py                        NlToSQLServer abstract class
-      fastapi/__init__.py                FastAPI route wiring
-    databases/
-      mongodb/                           NlToSQLDatabase abstract + MongoDB impl
-      vector/                            VectorDatabase abstract + Chroma impl
-      sql_database.py                    SQLAlchemy engine + safety wrappers
-    models/                              pydantic domain models
-    repositories/                        Mongo-backed persistence per entity
-    services/
-      sql_generation.py                  generate / execute / export SQL
-      nl_generation.py                   summarise SQL results
-      database_connection.py             connection lifecycle, encryption
-      prompt.py                          prompt persistence
-      context_store/                     example-SQL embedding + retrieval
-      finetuning/openai_finetuning.py    dataset build + OpenAI fine-tune driver
-      db_scanner/                        SQLAlchemy schema scanner
-        types/                             per-dialect scanner overrides
-    llm_agents/
-      sql_generation_agent.py            LangChain agent for SQL gen
-      finetuning_agent.py                agent that uses a fine-tuned model
-      nl_answer_agent.py                 SQL-result → NL answer
-      large_language_model/              LLM wrappers (chat, base)
-      toolkit/                           tools exposed to the agents
-    constants/                           prompt templates, model contexts, error map
-    utils/
-      encrypt.py                         Fernet wrapper
-      sql_utils.py                       schema filtering + finetuning validation
-      custom_error.py                    typed errors + HTTP error mapping
-      aws_s3.py                          S3 / MinIO uploads
-      timeout.py                         query-timeout helper
-      strings.py
+  main.py                              uvicorn entry point
+  config.py                            Settings + System (DI container)
+  api/
+    __init__.py                        API abstract class
+    nl_to_sql_api.py                   concrete API implementation
+    types/                             pydantic request/response models
+  server/
+    __init__.py                        NlToSQLServer abstract class
+    fastapi/__init__.py                FastAPI route wiring
+  databases/
+    mongodb/                           NlToSQLDatabase abstract + MongoDB impl
+    vector/                            VectorDatabase abstract + Chroma impl
+    sql_database.py                    SQLAlchemy engine + safety wrappers
+  models/                              pydantic domain models
+  repositories/                        Mongo-backed persistence per entity
+  services/
+    sql_generation.py                  generate / execute / export SQL
+    nl_generation.py                   summarise SQL results
+    database_connection.py             connection lifecycle, encryption
+    prompt.py                          prompt persistence
+    context_store/                     example-SQL embedding + retrieval
+    finetuning/openai_finetuning.py    dataset build + OpenAI fine-tune driver
+    db_scanner/                        SQLAlchemy schema scanner
+      types/                             per-dialect scanner overrides
+  llm_agents/
+    sql_generation_agent.py            LangChain agent for SQL gen
+    finetuning_agent.py                agent that uses a fine-tuned model
+    nl_answer_agent.py                 SQL-result → NL answer
+    large_language_model/              LLM wrappers (chat, base)
+    toolkit/                           tools exposed to the agents
+  constants/                           prompt templates, model contexts, error map
+  utils/
+    encrypt.py                         Fernet wrapper
+    sql_utils.py                       schema filtering + finetuning validation
+    custom_error.py                    typed errors + HTTP error mapping
+    aws_s3.py                          S3 / MinIO uploads
+    timeout.py                         query-timeout helper
+    strings.py
 Dockerfile
-docker-compose.yml                       engine + mongodb + postgres
+docker-compose.yml                     engine + mongodb + postgres
 log_config.yml
 requirements.txt
 ```

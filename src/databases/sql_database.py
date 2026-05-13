@@ -247,7 +247,7 @@ def create_sql_query_status(
             run_with_timeout(
                 db.run_sql,
                 args=(query,),
-                timeout_duration=int(os.getenv("SQL_EXECUTION_TIMEOUT", "60")),
+                timeout_duration=int(os.getenv("SQL_EXECUTION_TIMEOUT", "3")),
             )
             sql_generation.status = "VALID"
             sql_generation.error = None
