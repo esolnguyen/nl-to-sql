@@ -20,16 +20,18 @@ class ChatModel(LargeLanguageModel):
         **kwargs: Any
     ) -> Any:
         api_key = database_connection.decrypt_api_key()
-        if self.system.settings["azure_api_key"] is not None:
+        settings = self.system.settings
+        if settings["azure_api_key"] is not None:
             model_family = "azure"
         if model_family == "azure":
-            if api_base.endswith("/"):
-                api_base = api_base[:-1]
+            azure_endpoint = api_base or settings["azure_openai_endpoint"]
+            if azure_endpoint and azure_endpoint.endswith("/"):
+                azure_endpoint = azure_endpoint[:-1]
             return AzureChatOpenAI(
-                deployment_name=model_name,
-                openai_api_key=api_key,
-                azure_endpoint=api_base,
-                api_version=self.system.settings["azure_api_version"],
+                deployment_name=settings["azure_chat_deployment"] or model_name,
+                openai_api_key=settings["azure_api_key"] or api_key,
+                azure_endpoint=azure_endpoint,
+                api_version=settings["azure_api_version"],
                 **kwargs
             )
         if model_family == "openai":

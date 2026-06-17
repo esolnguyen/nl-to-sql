@@ -5,7 +5,8 @@ from typing import List
 from urllib.parse import unquote
 import sqlparse
 from sqlalchemy import MetaData, create_engine, inspect, text
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import Engine, make_url
+from sqlalchemy.exc import ArgumentError
 from sqlalchemy.exc import OperationalError
 from sshtunnel import SSHTunnelForwarder
 from models.sql_generation import SQLGeneration
@@ -110,28 +111,25 @@ class SQLDatabase:
 
     @classmethod
     def extract_parameters(cls, input_string):
-        pattern = r"([^:/]+)://([^:]+):([^@]+)@([^:/]+)(?::(\d+))?/([^/]+)"
+        """Parse a SQLAlchemy URL into its components.
 
-        match = re.match(pattern, input_string)
+        Uses SQLAlchemy's own URL parser instead of a regex so that
+        passwords/usernames containing reserved characters (``@``, ``:``,
+        ``/`` once percent-encoded) are handled correctly.
+        """
+        try:
+            url = make_url(input_string)
+        except ArgumentError:
+            return None
 
-        if match:
-            driver = match.group(1)
-            user = match.group(2)
-            password = match.group(3)
-            host = match.group(4)
-            port = match.group(5)
-            db = match.group(6) if match.group(6) else None
-
-            return {
-                "driver": driver,
-                "user": user,
-                "password": password,
-                "host": host,
-                "port": port if port else None,
-                "db": db,
-            }
-
-        return None
+        return {
+            "driver": url.drivername,
+            "user": url.username,
+            "password": url.password,
+            "host": url.host,
+            "port": str(url.port) if url.port else None,
+            "db": url.database or None,
+        }
 
     @classmethod
     def from_uri_ssh(cls, database_info: DatabaseConnection):
@@ -156,7 +154,6 @@ class SQLDatabase:
                 5432 if not db_uri_obj["port"] else int(db_uri_obj["port"]),
             ),
         )
-        server.stop(force=True)
         server.start()
         local_port = str(server.local_bind_port)
         local_host = str(server.local_bind_host)

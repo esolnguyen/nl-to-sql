@@ -45,8 +45,19 @@ class Settings(BaseSettings):
     azure_api_key: str | None = Field(None, env="AZURE_API_KEY")
     embedding_model: str | None = Field(None, env="EMBEDDING_MODEL")
     azure_api_version: str | None = Field(None, env="AZURE_API_VERSION")
+    azure_openai_endpoint: str | None = Field(None, env="AZURE_OPENAI_ENDPOINT")
+    azure_chat_deployment: str | None = Field(
+        None, env="AZURE_OPENAI_CHAT_DEPLOYMENT"
+    )
     only_store_csv_files_locally: bool = Field(
         False, env="ONLY_STORE_CSV_FILES_LOCALLY"
+    )
+
+    # Operational / security
+    debug: bool = Field(False, env="DEBUG")
+    api_key: str | None = Field(None, env="API_KEY")
+    upper_limit_query_return_rows: int = Field(
+        50, env="UPPER_LIMIT_QUERY_RETURN_ROWS"
     )
 
     def require(self, key: str) -> Any:

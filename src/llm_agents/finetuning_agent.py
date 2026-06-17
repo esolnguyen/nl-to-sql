@@ -29,6 +29,7 @@ from llm_agents import (
     SQLGenerator,
     replace_unprocessable_characters,
 )
+from llm_agents.embeddings import build_embedding
 from llm_agents.toolkit.finetuning_agent_toolkit import (
     FineTuningAgentToolkit,
 )
@@ -149,16 +150,9 @@ class FinetuningAgent(SQLGenerator):
                 f"Finetuning should have the status {FineTuningStatus.SUCCEEDED.value} to generate SQL queries."
             )
         self.database = SQLDatabase.get_sql_engine(database_connection)
-        if self.system.settings["azure_api_key"] is not None:
-            embedding = AzureOpenAIEmbeddings(
-                openai_api_key=database_connection.decrypt_api_key(),
-                model=EMBEDDING_MODEL,
-            )
-        else:
-            embedding = OpenAIEmbeddings(
-                openai_api_key=database_connection.decrypt_api_key(),
-                model=EMBEDDING_MODEL,
-            )
+        embedding = build_embedding(
+            self.system, database_connection.decrypt_api_key()
+        )
         toolkit = FineTuningAgentToolkit(
             db=self.database,
             instructions=instructions,
@@ -262,16 +256,9 @@ class FinetuningAgent(SQLGenerator):
                 f"Finetuning should have the status {FineTuningStatus.SUCCEEDED.value} to generate SQL queries."
             )
         self.database = SQLDatabase.get_sql_engine(database_connection)
-        if self.system.settings["azure_api_key"] is not None:
-            embedding = AzureOpenAIEmbeddings(
-                openai_api_key=database_connection.decrypt_api_key(),
-                model=EMBEDDING_MODEL,
-            )
-        else:
-            embedding = OpenAIEmbeddings(
-                openai_api_key=database_connection.decrypt_api_key(),
-                model=EMBEDDING_MODEL,
-            )
+        embedding = build_embedding(
+            self.system, database_connection.decrypt_api_key()
+        )
         toolkit = FineTuningAgentToolkit(
             db=self.database,
             instructions=instructions,

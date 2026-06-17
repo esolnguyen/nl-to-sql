@@ -135,7 +135,21 @@ All configuration is read from environment variables (`.env` is auto-loaded by `
 | `ASTRA_DB_API_ENDPOINT`, `ASTRA_DB_APPLICATION_TOKEN` | Only for Astra vector store |
 | `S3_AWS_ACCESS_KEY_ID`, `S3_AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME`, `S3_REGION`, `S3_CUSTOM_ENDPOINT` | CSV export to S3 / MinIO |
 | `ONLY_STORE_CSV_FILES_LOCALLY` | If true, skip S3 and keep exports on the container's filesystem |
-| `AZURE_API_KEY`, `AZURE_API_VERSION`, `EMBEDDING_MODEL` | Azure-hosted embeddings |
+| `DEBUG` | If true, FastAPI returns tracebacks to clients — keep false in production (default false) |
+| `API_KEY` | When set, every route except `/heartbeat` requires header `X-API-Key: <key>`. Empty disables auth (dev only) |
+
+### Azure OpenAI
+
+Set `AZURE_API_KEY` to route **all** chat and embedding calls through Azure OpenAI
+instead of public OpenAI. When set, `OPENAI_API_KEY` is not required.
+
+| Variable | Purpose |
+|---|---|
+| `AZURE_API_KEY` | Azure OpenAI key; its presence switches the provider to Azure |
+| `AZURE_OPENAI_ENDPOINT` | e.g. `https://<resource>.openai.azure.com` |
+| `AZURE_OPENAI_CHAT_DEPLOYMENT` | Deployment name for the chat/SQL-generation model |
+| `AZURE_API_VERSION` | Azure API version, e.g. `2024-12-01-preview` |
+| `EMBEDDING_MODEL` | Azure embedding **deployment** name (used for table-ranking) |
 
 ---
 

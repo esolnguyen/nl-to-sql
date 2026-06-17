@@ -1,10 +1,11 @@
 from typing import List
 
 import fastapi
-from fastapi import BackgroundTasks, status
+from fastapi import BackgroundTasks, Depends, status
 from fastapi import FastAPI as _FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.routing import APIRoute
+from server.auth import make_api_key_dependency
 from api.types.requests import (
     NLGenerationRequest,
     NLGenerationsSQLGenerationRequest,
@@ -52,7 +53,7 @@ def use_route_names_as_operation_ids(app: _FastAPI) -> None:
 class FastAPI(NlToSQLServer):
     def __init__(self, settings: Settings):
         super().__init__(settings)
-        self._app = fastapi.FastAPI(debug=True)
+        self._app = fastapi.FastAPI(debug=settings.debug)
 
         system = System(settings)
         api = system.instance(API)
@@ -60,7 +61,10 @@ class FastAPI(NlToSQLServer):
 
         self._api: API = api
 
-        self.router = fastapi.APIRouter()
+        # All business routes require the API key; /heartbeat is registered
+        # separately below and stays public for liveness probes.
+        auth = make_api_key_dependency(settings)
+        self.router = fastapi.APIRouter(dependencies=[Depends(auth)])
 
         self.router.add_api_route(
             "/api/v1/database-connections",
@@ -361,11 +365,12 @@ class FastAPI(NlToSQLServer):
             tags=["Stream SQL Generation"],
         )
 
-        self.router.add_api_route(
+        self._app.include_router(self.router)
+
+        # Public, unauthenticated liveness probe.
+        self._app.add_api_route(
             "/api/v1/heartbeat", self.heartbeat, methods=["GET"], tags=["System"]
         )
-
-        self._app.include_router(self.router)
         use_route_names_as_operation_ids(self._app)
 
     def app(self) -> fastapi.FastAPI:

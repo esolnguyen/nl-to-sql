@@ -30,6 +30,7 @@ from llm_agents import (
     SQLGenerator,
     replace_unprocessable_characters,
 )
+from llm_agents.embeddings import build_embedding
 from llm_agents.toolkit.sql_generation_agent_toolkit import (
     SQLGenerationAgentToolkit,
 )
@@ -163,32 +164,17 @@ class SQLGenerationAgent(SQLGenerator):
             number_of_samples = 0
         logger.info(f"Generating SQL response to question: {str(user_prompt.dict())}")
         self.database = SQLDatabase.get_sql_engine(database_connection)
-        if self.system.settings["azure_api_key"] is not None:
-            toolkit = SQLGenerationAgentToolkit(
-                db=self.database,
-                context=context,
-                few_shot_examples=new_fewshot_examples,
-                instructions=instructions,
-                is_multiple_schema=True if user_prompt.schemas else False,
-                db_scan=db_scan,
-                embedding=AzureOpenAIEmbeddings(
-                    openai_api_key=database_connection.decrypt_api_key(),
-                    model=EMBEDDING_MODEL,
-                ),
-            )
-        else:
-            toolkit = SQLGenerationAgentToolkit(
-                db=self.database,
-                context=context,
-                few_shot_examples=new_fewshot_examples,
-                instructions=instructions,
-                is_multiple_schema=True if user_prompt.schemas else False,
-                db_scan=db_scan,
-                embedding=OpenAIEmbeddings(
-                    openai_api_key=database_connection.decrypt_api_key(),
-                    model=EMBEDDING_MODEL,
-                ),
-            )
+        toolkit = SQLGenerationAgentToolkit(
+            db=self.database,
+            context=context,
+            few_shot_examples=new_fewshot_examples,
+            instructions=instructions,
+            is_multiple_schema=True if user_prompt.schemas else False,
+            db_scan=db_scan,
+            embedding=build_embedding(
+                self.system, database_connection.decrypt_api_key()
+            ),
+        )
         agent_executor = self.create_sql_agent(
             toolkit=toolkit,
             verbose=True,
@@ -282,26 +268,18 @@ class SQLGenerationAgent(SQLGenerator):
             new_fewshot_examples = None
             number_of_samples = 0
         self.database = SQLDatabase.get_sql_engine(database_connection)
-        if self.system.settings["azure_api_key"] is not None:
-            embedding = AzureOpenAIEmbeddings(
-                openai_api_key=database_connection.decrypt_api_key(),
-                model=EMBEDDING_MODEL,
-            )
-        else:
-            embedding = OpenAIEmbeddings(
-                openai_api_key=database_connection.decrypt_api_key(),
-                model=EMBEDDING_MODEL,
-            )
-            toolkit = SQLGenerationAgentToolkit(
-                queuer=queue,
-                db=self.database,
-                context=[{}],
-                few_shot_examples=new_fewshot_examples,
-                instructions=instructions,
-                is_multiple_schema=True if user_prompt.schemas else False,
-                db_scan=db_scan,
-                embedding=embedding,
-            )
+        toolkit = SQLGenerationAgentToolkit(
+            queuer=queue,
+            db=self.database,
+            context=[{}],
+            few_shot_examples=new_fewshot_examples,
+            instructions=instructions,
+            is_multiple_schema=True if user_prompt.schemas else False,
+            db_scan=db_scan,
+            embedding=build_embedding(
+                self.system, database_connection.decrypt_api_key()
+            ),
+        )
         agent_executor = self.create_sql_agent(
             toolkit=toolkit,
             verbose=True,

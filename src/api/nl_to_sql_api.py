@@ -428,7 +428,7 @@ class NLToSQLAPI(API):
         sql_generation_service = SQLGenerationService(
             self.system, self.storage)
         try:
-            results = sql_generation_service.execute(
+            results = sql_generation_service.execute_sql(
                 sql_generation_id, max_rows)
         except SQLGenerationNotFoundError as e:
             raise HTTPException(status_code=404, detail=str(e)) from e

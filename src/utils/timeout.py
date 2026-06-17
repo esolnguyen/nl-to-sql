@@ -12,7 +12,13 @@ def run_with_timeout(func, args=(), kwargs=None, timeout_duration=60):
             result_container.append(e)
 
     result_container = []
-    thread = threading.Thread(target=func_wrapper, args=(result_container,))
+    # daemon=True so a query that ignores the timeout does not keep the
+    # process alive on shutdown. Note: Python cannot forcibly kill the
+    # thread, so the underlying query may still run on the DB until it
+    # finishes — pair this with a DB-side statement timeout for hard limits.
+    thread = threading.Thread(
+        target=func_wrapper, args=(result_container,), daemon=True
+    )
     thread.start()
     thread.join(timeout=timeout_duration)
     if thread.is_alive():

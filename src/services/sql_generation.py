@@ -114,6 +114,8 @@ class SQLGenerationService:
     def execute_sql(
         self, sql_generation_id: str, max_rows: int = 100
     ) -> tuple[str, dict]:
+        upper_limit = int(os.getenv("UPPER_LIMIT_QUERY_RETURN_ROWS", "50"))
+        max_rows = min(max_rows, upper_limit)
         sql_generation = self.sql_generation_repository.find_by_id(sql_generation_id)
         if not sql_generation:
             raise SQLGenerationNotFoundError(
